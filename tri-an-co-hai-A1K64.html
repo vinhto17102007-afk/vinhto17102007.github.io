@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tri Ân Cô Hải - A1K64 ✨</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js WebGL Engine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Luxury Vietnamese Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,400;1,600&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --glow-primary: #ffaa00;
+            --glow-secondary: #ffe89e;
+            --glow-accent: #ff5e8e;
+            --bg-deep: #03020a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--bg-deep);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #ffffff;
+            cursor: grab;
+            touch-action: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body.is-dragging,
+        body.is-dragging * {
+            cursor: grabbing !important;
+        }
+
+        /* 3D WebGL Canvas */
+        #webgl-container {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            touch-action: none;
+        }
+
+        #webgl-container canvas {
+            display: block;
+            touch-action: none;
+        }
+
+        /* Luxury Celestial Star Cursor */
+        body.has-luxe-cursor,
+        body.has-luxe-cursor * {
+            cursor: none !important;
+        }
+
+        #luxe-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 48px;
+            height: 48px;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0;
+            transform: translate3d(-100px, -100px, 0) translate(-50%, -50%);
+            transition: opacity 0.25s ease;
+            will-change: transform, opacity;
+        }
+        #luxe-cursor.visible {
+            opacity: 1;
+        }
+
+        .luxe-cursor-ring {
+            position: absolute;
+            inset: 5px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 232, 158, 0.55);
+            box-shadow: 0 0 14px rgba(255, 170, 0, 0.55), inset 0 0 10px rgba(255, 232, 158, 0.28);
+            transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease, box-shadow 0.22s ease;
+        }
+
+        .luxe-cursor-star {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 12px var(--glow-primary));
+            transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .luxe-cursor-star svg {
+            width: 21px;
+            height: 21px;
+            animation: luxeCursorTwinkle 2.6s ease-in-out infinite;
+        }
+
+        @keyframes luxeCursorTwinkle {
+            0%, 100% { transform: scale(0.9) rotate(0deg); opacity: 0.88; }
+            50% { transform: scale(1.08) rotate(14deg); opacity: 1; }
+        }
+
+        body.is-dragging .luxe-cursor-ring {
+            transform: scale(1.45);
+            border-color: var(--glow-primary);
+            box-shadow: 0 0 24px var(--glow-primary), inset 0 0 14px var(--glow-secondary);
+        }
+
+        body.is-dragging .luxe-cursor-star {
+            transform: scale(0.78) rotate(45deg);
+        }
+
+        /* Cinematic Vignette & Ambient Radial Glow */
+        .cinema-vignette {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+            background:
+                radial-gradient(circle at 50% 50%, transparent 45%, rgba(2, 0, 6, 0.78) 100%),
+                radial-gradient(circle at 50% 45%, rgba(255, 42, 133, 0.08) 0%, transparent 60%);
+            transition: background 1.5s ease;
+        }
+
+        /* Shockwave Ring on Spacebar Theme Shift */
+        #chromatic-shockwave {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            border: 2px solid var(--glow-primary);
+            box-shadow: 0 0 60px var(--glow-primary), inset 0 0 40px var(--glow-secondary);
+            pointer-events: none;
+            z-index: 4;
+            opacity: 0;
+        }
+        .shockwave-active {
+            animation: rippleExpand 1.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes rippleExpand {
+            0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0.95; }
+            100% { transform: translate(-50%, -50%) scale(140); opacity: 0; }
+        }
+
+        /* Ethereal Floating Title & Poetic Whisper (Zero Button Clutter) */
+        .font-serif-cinema {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .font-script-luxury {
+            font-family: 'Great Vibes', cursive;
+        }
+
+        .ethereal-header {
+            position: fixed;
+            top: 3.8vh;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            text-align: center;
+            pointer-events: none;
+            transition: opacity 0.9s ease, transform 0.9s ease;
+        }
+
+        .ethereal-subtitle {
+            font-size: clamp(0.6rem, 0.95vw, 0.72rem);
+            letter-spacing: 0.48em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.42);
+            margin-bottom: 0.25rem;
+            text-shadow: 0 0 14px var(--glow-primary);
+        }
+
+        .ethereal-main-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 300;
+            font-style: italic;
+            font-size: clamp(1.35rem, 2.5vw, 2.15rem);
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.78);
+            text-shadow: 0 0 24px var(--glow-primary), 0 0 48px rgba(255, 215, 120, 0.28);
+        }
+
+        /* 3D Floating Vietnamese Poetic Whispers Layer (Ultra Subtle) */
+        #whispers-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 3;
+            overflow: hidden;
+        }
+        .floating-whisper {
+            position: absolute;
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 400;
+            font-size: clamp(0.85rem, 1.15vw, 1.02rem);
+            letter-spacing: 0.08em;
+            white-space: nowrap;
+            color: rgba(255, 255, 255, 0.52);
+            text-shadow: 0 0 12px var(--glow-primary), 0 0 22px var(--glow-secondary);
+            pointer-events: none;
+            will-change: transform, opacity;
+            transition: color 1s ease, text-shadow 1s ease;
+        }
+
+        /* Whisper-thin Bottom Instruction (Strict Minimalist UX) */
+        .whisper-instruction {
+            position: fixed;
+            bottom: 2.6vh;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 6;
+            pointer-events: none;
+            text-align: center;
+            width: 94%;
+            max-width: 900px;
+            opacity: 0.34;
+            transition: opacity 0.6s ease;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(0.8rem, 1.15vw, 0.96rem);
+            letter-spacing: 0.16em;
+            color: #ffffff;
+            text-shadow: 0 0 12px var(--glow-primary);
+        }
+        body:hover .whisper-instruction {
+            opacity: 0.56;
+        }
+
+        /* Thin Progress Aura Ring around Center during Hold Charge */
+        #charge-aura-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 280px;
+            height: 280px;
+            transform: translate(-50%, -50%) scale(0.75);
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 0 50px var(--glow-primary), inset 0 0 35px var(--glow-secondary);
+            pointer-events: none;
+            z-index: 3;
+            opacity: 0;
+            transition: opacity 0.35s ease, transform 0.2s ease-out;
+        }
+
+        /* Frameless Lumina Glass Love Letter (Holographic Aurora Refraction) */
+        #lumina-love-letter {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            background: radial-gradient(circle at center, rgba(8, 2, 18, 0.55) 0%, rgba(2, 0, 6, 0.82) 100%);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            cursor: default;
+            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.9s ease;
+        }
+        #lumina-love-letter.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .lumina-glass-slab {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            padding: clamp(2rem, 4.5vw, 3.4rem);
+            border-radius: 32px;
+            background: linear-gradient(
+                145deg,
+                rgba(255, 255, 255, 0.08) 0%,
+                rgba(18, 12, 32, 0.58) 52%,
+                rgba(255, 185, 60, 0.09) 100%
+            );
+            box-shadow:
+                0 35px 95px rgba(0, 0, 0, 0.75),
+                0 0 65px rgba(255, 174, 0, 0.22),
+                inset 0 0 1.5px 1px rgba(255, 232, 160, 0.32),
+                inset 0 0 50px rgba(255, 174, 0, 0.1);
+            transform: translateY(35px) scale(0.92) rotateX(8deg);
+            transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 1s ease;
+            overflow: hidden;
+            text-align: center;
+            cursor: default;
+        }
+        #lumina-love-letter.active .lumina-glass-slab {
+            transform: translateY(0) scale(1) rotateX(0deg);
+        }
+
+        /* Holographic Prismatic Shimmer inside the Love Letter */
+        .lumina-glass-slab::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                from 0deg at 50% 50%,
+                transparent 0deg,
+                rgba(255, 215, 110, 0.14) 60deg,
+                rgba(255, 130, 180, 0.12) 120deg,
+                transparent 180deg,
+                rgba(120, 210, 255, 0.12) 240deg,
+                rgba(255, 180, 50, 0.14) 300deg,
+                transparent 360deg
+            );
+            animation: rotateAurora 20s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes rotateAurora {
+            100% { transform: rotate(360deg); }
+        }
+
+        .letter-copy {
+            position: relative;
+            z-index: 2;
+            outline: none;
+            transition: text-shadow 0.3s ease, opacity 0.4s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Luxury Celestial Star Cursor -->
+    <div id="luxe-cursor" aria-hidden="true">
+        <span class="luxe-cursor-ring"></span>
+        <span class="luxe-cursor-star">
+            <svg viewBox="0 0 32 32" aria-hidden="true">
+                <defs>
+                    <radialGradient id="luxeCursorGold" cx="50%" cy="42%" r="66%">
+                        <stop offset="0%" stop-color="#ffffff"/>
+                        <stop offset="38%" stop-color="#ffe89e"/>
+                        <stop offset="100%" stop-color="#ffaa00"/>
+                    </radialGradient>
+                </defs>
+                <path d="M16 1.4C17.5 9.6 22.4 14.5 30.6 16C22.4 17.5 17.5 22.4 16 30.6C14.5 22.4 9.6 17.5 1.4 16C9.6 14.5 14.5 9.6 16 1.4Z" fill="url(#luxeCursorGold)"/>
+                <circle cx="25.4" cy="6.6" r="1.15" fill="#fffbe6" opacity="0.95"/>
+                <circle cx="6.8" cy="24.2" r="0.85" fill="#fff3b0" opacity="0.8"/>
+            </svg>
+        </span>
+    </div>
+
+    <!-- 3D WebGL Scene Container -->
+    <div id="webgl-container"></div>
+
+    <!-- Cinematic Vignette Overlay -->
+    <div class="cinema-vignette"></div>
+
+    <!-- Spacebar Chromatic Shockwave -->
+    <div id="chromatic-shockwave"></div>
+
+    <!-- Charge Convergence Aura Indicator -->
+    <div id="charge-aura-indicator"></div>
+
+    <!-- Floating 3D-Projected Vietnamese Poetic Whispers (Minimal & Subtle) -->
+    <div id="whispers-container"></div>
+
+    <!-- Top Ethereal Poetic Header (Minimalist Cinema) -->
+    <header class="ethereal-header" id="topHeader">
+        <div class="ethereal-subtitle" id="paletteTitle">20 • 11 • Hoàng Kim Tri Thức</div>
+        <h1 class="ethereal-main-title" id="stateSubtitle">Tri Ân Cô Hải - A1K64</h1>
+    </header>
+
+    <!-- Single Whisper-Thin Translucent Bottom Instruction (Strict Minimalist Mandate) -->
+    <div class="whisper-instruction">
+        [Kéo chuột] Xoay 360° ngắm toàn cảnh • [Cuộn chuột / phím F] Ghép chân dung cô Hải • [Giữ chuột] Kết tinh Bến Đò Tri Thức • [Nhấn đúp] Mở tâm thư gửi cô Hải • [Space] Đổi sắc thái thiên hà
+    </div>
+
+    <!-- Frameless Biomorphic Frosted Glass Scroll / Letter ("Tâm Thư Tri Ân 20-11") -->
+    <div id="lumina-love-letter">
+        <div class="lumina-glass-slab" id="luminaSlab">
+            <div class="relative z-10">
+                <p id="letterBadge" class="text-[10px] uppercase tracking-[0.42em] text-amber-200/75 mb-3">
+                    ✦ Tâm Thư Gửi Cô Hải • Bụi Phấn Hóa Sao Trời (1/5) ✦
+                </p>
+
+                <h2 id="letterTitle"
+                    class="letter-copy font-script-luxury text-4xl sm:text-6xl text-white mb-5"
+                    style="text-shadow: 0 0 25px var(--glow-primary), 0 0 45px var(--glow-secondary);">
+                    Kính Gửi Cô Nguyễn Thị Ngọc Hải
+                </h2>
+
+                <div id="letterBody"
+                     class="letter-copy font-serif-cinema italic text-lg sm:text-xl leading-relaxed text-amber-50/90 space-y-4 max-h-[46vh] overflow-y-auto px-2">
+                    <p>Có những hạt bụi phấn rơi xuống bục giảng năm nào nhưng chưa bao giờ tan biến — chúng đã lặng lẽ hóa thành hàng vạn vì sao dẫn lối cho chúng em, những học trò A1K64, đi qua những vùng trời rộng lớn của cuộc đời.</p>
+                    <p>Nhân ngày Nhà Giáo Việt Nam 20-11, cả lớp xin gửi tới Cô Hải ngàn đóa hoa tri ân rực rỡ nhất. Chúc Cô luôn dồi dào sức khỏe, giữ mãi nụ cười rạng rỡ và ngọn lửa ấm áp trên từng chuyến đò tri thức.</p>
+                </div>
+
+                <p id="letterSign"
+                   class="letter-copy font-serif-cinema text-amber-200/95 not-italic font-normal text-sm sm:text-base tracking-[0.22em] pt-5">
+                    — A1K64 Trọn Đời Khắc Ghi Công Ơn Cô Hải —
+                </p>
+
+                <p class="mt-6 text-[11px] font-serif-cinema italic tracking-[0.18em] text-white/40">
+                    (Nhấn phím [TAB] để đổi mẫu tâm tư 20-11 • Nhấn [ESC] hoặc chạm ra ngoài để đóng)
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================================================
+           1. FIVE REGAL 20-11 CHROMATIC PALETTES (SPACEBAR SHOCKWAVE SHIFT)
+           ========================================================================== */
+        const CHROMATIC_PALETTES = [
+            {
+                name: "20 • 11 • Hoàng Kim Tri Thức",
+                primary: new THREE.Color("#ffaa00"),      // Imperial Gold Pages
+                secondary: new THREE.Color("#ffe89e"),    // Warm Amber Starlight
+                accent: new THREE.Color("#ff5e8e"),       // Lotus Rose Petals
+                butterfly: new THREE.Color("#fff3b0"),    // Golden Crystal Wing
+                flame: new THREE.Color("#ffdd55"),        // Wisdom Lantern Flame
+                bgHex: "#03020a",
+                cssPrimary: "#ffaa00",
+                cssSecondary: "#ffe89e"
+            },
+            {
+                name: "20 • 11 • Sen Hồng Tri Ân",
+                primary: new THREE.Color("#ff2a85"),      // Sacred Lotus Rose
+                secondary: new THREE.Color("#ffd166"),    // Champagne Gold Ink
+                accent: new THREE.Color("#ff85c0"),       // Soft Silk Petal
+                butterfly: new THREE.Color("#ffe5ec"),    // Pearl Rose Wing
+                flame: new THREE.Color("#ffae00"),        // Warm Golden Flame
+                bgHex: "#06010a",
+                cssPrimary: "#ff2a85",
+                cssSecondary: "#ffd166"
+            },
+            {
+                name: "20 • 11 • Ngân Hà Bụi Phấn",
+                primary: new THREE.Color("#e0f2fe"),      // Chalk Starlight Silver
+                secondary: new THREE.Color("#38bdf8"),    // Cyan Aurora Wave
+                accent: new THREE.Color("#c084fc"),       // Nebula Violet Lotus
+                butterfly: new THREE.Color("#7dd3fc"),    // Diamond Sky Wing
+                flame: new THREE.Color("#fde047"),        // Beacon Star Flame
+                bgHex: "#02050d",
+                cssPrimary: "#38bdf8",
+                cssSecondary: "#e0f2fe"
+            },
+            {
+                name: "20 • 11 • Lưu Ly Cổ Điển",
+                primary: new THREE.Color("#10b981"),      // Emerald Jade Wisdom
+                secondary: new THREE.Color("#fbbf24"),    // Royal Golden Ink
+                accent: new THREE.Color("#34d399"),       // Luminous Celadon
+                butterfly: new THREE.Color("#fde68a"),    // Gold Leaf Wing
+                flame: new THREE.Color("#f59e0b"),        // Amber Lantern Flame
+                bgHex: "#010806",
+                cssPrimary: "#10b981",
+                cssSecondary: "#fbbf24"
+            },
+            {
+                name: "20 • 11 • Tím Huế Hoài Niệm",
+                primary: new THREE.Color("#a855f7"),      // Nostalgic Royal Purple
+                secondary: new THREE.Color("#fda4af"),    // Peach Blossom Silk
+                accent: new THREE.Color("#fbbf24"),       // Starlight Gold
+                butterfly: new THREE.Color("#f5d0fe"),    // Orchid Crystal Wing
+                flame: new THREE.Color("#fde047"),        // Warm Candlelight
+                bgHex: "#05010c",
+                cssPrimary: "#a855f7",
+                cssSecondary: "#fda4af"
+            }
+        ];
+
+        /* ==========================================================================
+           1B. FIVE DEEPLY POETIC VIETNAMESE 20-11 LETTERS (CYCLE WITH [TAB])
+           ========================================================================== */
+        const LETTERS_20_11 = [
+            {
+                badge: "✦ Tâm Thư Gửi Cô Hải • Bụi Phấn Hóa Sao Trời (1/5) ✦",
+                title: "Kính Gửi Cô Nguyễn Thị Ngọc Hải",
+                body: `
+                    <p>Có những hạt bụi phấn rơi xuống bục giảng năm nào nhưng chưa bao giờ tan biến — chúng đã lặng lẽ hóa thành hàng vạn vì sao dẫn lối cho chúng em, những học trò A1K64, đi qua những vùng trời rộng lớn của cuộc đời.</p>
+                    <p>Nhân ngày Nhà Giáo Việt Nam 20-11, cả lớp xin gửi tới Cô Hải ngàn đóa hoa tri ân rực rỡ nhất. Chúc Cô luôn dồi dào sức khỏe, giữ mãi nụ cười rạng rỡ và ngọn lửa ấm áp trên từng chuyến đò tri thức.</p>
+                `,
+                sign: "— A1K64 Trọn Đời Khắc Ghi Công Ơn Cô Hải —"
+            },
+            {
+                badge: "✦ Tâm Thư Gửi Cô Hải • Người Lái Đò Thầm Lặng (2/5) ✦",
+                title: "Bến Đò Năm Tháng Và Cô Hải",
+                body: `
+                    <p>Thời gian như dòng sông chảy mãi không ngừng, bao thế hệ học trò đã sang sông và bay đến những chân trời mới, chỉ có bóng dáng Cô vẫn kiên nhẫn nơi bến đò xưa, lặng lẽ đón thêm những chuyến đò mới.</p>
+                    <p>Tháng Mười Một về mang theo gió heo may và niềm xúc động nghẹn ngào. Cảm ơn Cô Hải đã bao dung cho những vụng về tuổi trẻ của A1K64, chắp cho chúng em đôi cánh của ước mơ và nhân cách làm người.</p>
+                `,
+                sign: "— Kính Chúc Cô Hải Ngày 20-11 Trọn Vẹn Hạnh Phúc —"
+            },
+            {
+                badge: "✦ Tâm Thư Gửi Cô Hải • Trang Sách Mở Ra Bầu Trời (3/5) ✦",
+                title: "Những Trang Sách Lấp Lánh Ánh Sao",
+                body: `
+                    <p>Mỗi bài giảng của Cô Hải không chỉ là kiến thức trong trang vở, mà là một cánh cửa diệu kỳ mở ra cả ngân hà bao la của lòng nhân ái, sự tử tế và niềm tin vào chính bản thân mình.</p>
+                    <p>Dù mai này đi đâu về đâu giữa dòng đời vội vã, giọng nói ấm áp của Cô vẫn luôn là ngọn hải đăng dịu dàng soi sáng tâm hồn chúng em. Kính chúc Cô mãi an nhiên và rạng rỡ!</p>
+                `,
+                sign: "— Tri Ân Người Thắp Lửa Ước Mơ Của A1K64 —"
+            },
+            {
+                badge: "✦ Tâm Thư Gửi Cô Hải • Nụ Cười Của Cô (4/5) ✦",
+                title: "Nụ Cười Của Cô, Mùa Thu Của Chúng Em",
+                body: `
+                    <p>Chúng em sẽ nhớ mãi khoảnh khắc Cô cười thật tươi, cười đến nheo cả mắt vì xúc động, giữa vòng tay những đứa học trò đang nô nức bên Cô. Với A1K64, đó là nụ cười đẹp nhất của mùa thu năm ấy.</p>
+                    <p>Có những điều khi còn ngồi trên ghế nhà trường chúng em chưa kịp nói, để rồi lớn lên mới thấu hiểu sự hy sinh thầm lặng đằng sau từng trang giáo án của Cô. Xin gửi vào những cánh hoa ánh sáng này lòng biết ơn sâu sắc nhất.</p>
+                `,
+                sign: "— Thương Nhớ Và Biết Ơn Cô Hải Thật Nhiều —"
+            },
+            {
+                badge: "✦ Tâm Thư Gửi Cô Hải • Hoa Đăng Ước Nguyện (5/5) ✦",
+                title: "Ngàn Hoa Đăng Thắp Sáng Lời Tri Ân",
+                body: `
+                    <p>Đêm nay, giữa vũ trụ hoa và những cánh bướm pha lê lấp lánh, A1K64 xin thắp lên ngọn hoa đăng của lòng kính trọng gửi đến Cô Nguyễn Thị Ngọc Hải, người cô đáng kính nhất trong những năm tháng học trò của chúng em.</p>
+                    <p>Cầu chúc Cô luôn mạnh khỏe, hạnh phúc viên mãn, và mãi là điểm tựa tinh thần cao quý dẫn dắt thêm biết bao thế hệ chạm tới bến bờ của tri thức và yêu thương.</p>
+                `,
+                sign: "— Mãi Tự Hào Là Học Trò Của Cô Hải —"
+            }
+        ];
+        let currentLetterIdx = 0;
+
+        let currentPaletteIdx = 0;
+        let activeColors = {
+            primary: CHROMATIC_PALETTES[0].primary.clone(),
+            secondary: CHROMATIC_PALETTES[0].secondary.clone(),
+            accent: CHROMATIC_PALETTES[0].accent.clone(),
+            butterfly: CHROMATIC_PALETTES[0].butterfly.clone(),
+            flame: CHROMATIC_PALETTES[0].flame.clone()
+        };
+        let targetColors = {
+            primary: CHROMATIC_PALETTES[0].primary.clone(),
+            secondary: CHROMATIC_PALETTES[0].secondary.clone(),
+            accent: CHROMATIC_PALETTES[0].accent.clone(),
+            butterfly: CHROMATIC_PALETTES[0].butterfly.clone(),
+            flame: CHROMATIC_PALETTES[0].flame.clone()
+        };
+
+        /* ==========================================================================
+           2. GENERATIVE WEB AUDIO ENGINE (CRYSTAL HARP + KALIMBA + WIND CHIME)
+           ========================================================================== */
+        class CosmicAudioEngine {
+            constructor() {
+                this.ctx = null;
+                this.isInitialized = false;
+                // Nostalgic Vietnamese Pentatonic / Lydian Harp Scale ("Bụi Phấn" & Celestial Chimes)
+                this.scale = [
+                    261.63, 293.66, 329.63, 392.00, 440.00,
+                    523.25, 587.33, 659.25, 783.99, 880.00,
+                    1046.50, 1174.66, 1318.51, 1567.98
+                ];
+                // Gentle nostalgic melody motif inspired by "Bụi Phấn"
+                this.melodyNotes = [
+                    392.00, 523.25, 659.25, 587.33, 523.25, 440.00,
+                    392.00, 440.00, 523.25, 587.33, 659.25, 783.99,
+                    659.25, 587.33, 523.25, 440.00, 523.25, 392.00
+                ];
+                this.melodyStep = 0;
+                this.lastPluckTime = 0;
+            }
+
+            init() {
+                if (this.isInitialized) {
+                    if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+                    return;
+                }
+                try {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioCtx();
+                    this.isInitialized = true;
+                } catch (e) {
+                    // Audio not supported
+                }
+            }
+
+            pluckCrystalNote(freqOverride = null, volume = 0.075, duration = 2.1) {
+                if (!this.isInitialized) return;
+                const now = this.ctx.currentTime;
+                const freq = freqOverride || this.scale[Math.floor(Math.random() * this.scale.length)];
+
+                const osc1 = this.ctx.createOscillator();
+                const osc2 = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(freq, now);
+
+                osc2.type = 'triangle';
+                osc2.frequency.setValueAtTime(freq * 2, now);
+
+                const subGain = this.ctx.createGain();
+                subGain.gain.setValueAtTime(volume * 0.22, now);
+                subGain.gain.exponentialRampToValueAtTime(0.0001, now + duration * 0.45);
+
+                gain.gain.setValueAtTime(0.0001, now);
+                gain.gain.linearRampToValueAtTime(volume, now + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+                osc1.connect(gain);
+                osc2.connect(subGain);
+                subGain.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc1.start(now);
+                osc2.start(now);
+                osc1.stop(now + duration);
+                osc2.stop(now + duration);
+            }
+
+            playNextMelodyNote(volume = 0.07) {
+                this.init();
+                const now = performance.now();
+                if (now - this.lastPluckTime < 210) return;
+                this.lastPluckTime = now;
+
+                const freq = this.melodyNotes[this.melodyStep];
+                this.melodyStep = (this.melodyStep + 1) % this.melodyNotes.length;
+                this.pluckCrystalNote(freq, volume, 2.3);
+            }
+
+            updateChargeSound(chargeRatio) {
+                this.init();
+                if (!this.isInitialized) return;
+                if (chargeRatio > 0.05 && Math.random() < 0.34) {
+                    const idx = Math.min(
+                        this.scale.length - 1,
+                        Math.floor(chargeRatio * this.scale.length)
+                    );
+                    this.pluckCrystalNote(this.scale[idx], 0.045 + chargeRatio * 0.055, 1.35);
+                }
+            }
+
+            playCelestialChord(baseFreq = 261.63) {
+                this.init();
+                if (!this.isInitialized) return;
+                const ratios = [1, 1.25, 1.5, 1.875, 2, 2.5, 3];
+                ratios.forEach((r, idx) => {
+                    setTimeout(() => {
+                        this.pluckCrystalNote(baseFreq * r, 0.08, 3.0);
+                    }, idx * 70);
+                });
+            }
+        }
+
+        const audioEngine = new CosmicAudioEngine();
+
+        /* ==========================================================================
+           3. THREE.JS 3D SCENE, CAMERA & INTERACTION STATE
+           ========================================================================== */
+        const container = document.getElementById('webgl-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x03020a, 0.0075);
+
+        const camera = new THREE.PerspectiveCamera(54, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 11, 46);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setClearColor(0x03020a, 1);
+        container.appendChild(renderer.domElement);
+
+        // Master 3D Sculpture Group
+        const universeGroup = new THREE.Group();
+        scene.add(universeGroup);
+
+        // Interactive Camera & Morph State
+        const interaction = {
+            mouseX: 0,
+            mouseY: 0,
+            worldMouse: new THREE.Vector3(0, 0, 12),
+            isHolding: false,
+            isDraggingOrbit: false,
+            pointerDown: false,
+            dragDistance: 0,
+            holdTimer: null,
+            prevPointerX: 0,
+            prevPointerY: 0,
+            orbitYaw: 0,
+            orbitPitch: 0.22,
+            orbitVelYaw: 0,
+            orbitVelPitch: 0,
+            cursorX: window.innerWidth / 2,
+            cursorY: window.innerHeight / 2,
+            cursorTargetX: window.innerWidth / 2,
+            cursorTargetY: window.innerHeight / 2,
+            cursorInitialized: false,
+            targetZoom: 46,
+            currentZoom: 46,
+            morphProgress: 0,      // 0 = Open 3D Book of Knowledge & Blooming Lotus, 1 = Celestial Boat & Fountain Pen Lantern
+            targetMorph: 0,
+            lockedBoatMode: false, // Stays in Boat & Pen Lantern mode once fully charged until double-click or hold release
+            supernovaBurst: 0,     // 0 -> 1 Sky Lantern & Golden Petal Supernova
+            shockwaveTime: -10.0,  // 3D spherical shockwave timer on Spacebar
+            holdStartTime: 0,
+            letterOpen: false,
+            faceTarget: 0,
+            faceProgress: 0,
+            faceActive: false,
+            autoRot: 0,
+            lastT: 0
+        };
+
+        /* ==========================================================================
+           4. PROCEDURAL 3D PARTICLE SCULPTURE (14,000 BIOLUMINESCENT PARTICLES)
+              Morphing seamlessly between:
+              - TARGET A (Default): "Cuốn Sách Ngân Hà & Đóa Hoa Tri Thức"
+                  1) Grand Open 3D Book with arched pages, stacked page edges & golden text lines
+                  2) Blooming 3D Lotus / Rose of Knowledge rising from the open book spine
+                  3) Swirling Chalk-Stardust Vortex & Constellation Halo Rings
+              - TARGET B (Hold): "Bến Đò Ngân Hà & Ngọn Bút Hoa Đăng Tri Ân"
+                  1) Poetic 3D Wooden/Celestial Boat ("Con Đò Tri Thức") with curved hull, prow & canopy
+                  2) Majestic 3D Fountain Pen Nib & Glowing Wisdom Lantern ("Ngọn Bút / Hoa Đăng")
+                  3) Sinusoidal Galaxy River Waves ("Sóng Ngân Hà Đưa Đò")
+           ========================================================================== */
+        const PARTICLE_COUNT = 14000;
+        const particleGeometry = new THREE.BufferGeometry();
+
+        const posBookLotus = new Float32Array(PARTICLE_COUNT * 3);
+        const posBoatLantern = new Float32Array(PARTICLE_COUNT * 3);
+        const posSupernovaVel = new Float32Array(PARTICLE_COUNT * 3);
+        const aScale = new Float32Array(PARTICLE_COUNT);
+        const aColorMix = new Float32Array(PARTICLE_COUNT); // 0: primary, 0.45: accent lotus, 0.75: secondary, 1.0: flame/nib gold
+        const aPhase = new Float32Array(PARTICLE_COUNT);
+
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+            const i3 = i * 3;
+            aPhase[i] = Math.random() * Math.PI * 2;
+            aScale[i] = Math.random() * 1.55 + 0.48;
+
+            // ==================================================================
+            // TARGET A: OPEN 3D BOOK OF KNOWLEDGE + BLOOMING LOTUS + GALAXY HALO
+            // ==================================================================
+            if (i < 6000) {
+                // 1) Grand Open 3D Book (Curved Left & Right Pages + Page Stack + Glowing Script Lines)
+                const idx = i;
+                const side = (idx % 2 === 0) ? 1 : -1;
+                // u: distance from central spine (0 -> 1), v: front-to-back page depth (-1 -> 1)
+                const isScriptLine = (idx % 5 === 0);
+                const u = isScriptLine
+                    ? (0.12 + (Math.floor(idx / 10) % 14) / 15.5)
+                    : Math.pow(Math.random(), 0.88);
+                const v = isScriptLine
+                    ? ((Math.floor(idx / 140) % 11) / 5.5 - 0.9) + (Math.random() - 0.5) * 0.03
+                    : (Math.random() * 2.0 - 1.0);
+
+                const pageWidth = 15.8;
+                const pageHeight = 11.2;
+
+                // Graceful open-book arch: rises out of the spine, then curves softly down at outer edge
+                const pageArch = Math.sin(u * Math.PI * 0.85) * 3.2 - Math.pow(u, 1.7) * 1.85;
+                // Layered page stack thickness near outer edges
+                const pageStackThickness = (idx % 7 === 0) ? -Math.random() * 1.35 : (Math.random() - 0.5) * 0.22;
+
+                const bx = side * (u * pageWidth);
+                const by = -6.2 + pageArch + pageStackThickness + v * 0.18;
+                const bz = v * pageHeight;
+
+                // Slight tilt toward the viewer so the open pages are immediately recognizable
+                const tiltAngle = 0.28;
+                const cosT = Math.cos(tiltAngle);
+                const sinT = Math.sin(tiltAngle);
+
+                posBookLotus[i3]     = bx;
+                posBookLotus[i3 + 1] = by * cosT - bz * sinT;
+                posBookLotus[i3 + 2] = by * sinT + bz * cosT;
+
+                // Highlight golden poetic lines and outer page borders
+                aColorMix[i] = (isScriptLine || u > 0.93) ? 0.78 : 0.12;
+            } else if (i < 10400) {
+                // 2) Blooming 3D Sacred Lotus / Flower of Knowledge rising above the Book Spine
+                const idx = i - 6000;
+                const ratio = idx / 4400;
+                // 3 concentric tiers of sacred lotus petals (Inner bud, Middle bloom, Outer open petals)
+                const tier = idx % 3;
+                const petalCount = (tier === 0) ? 8 : (tier === 1 ? 12 : 16);
+                const theta = ratio * Math.PI * 28;
+                const v = Math.pow(Math.random(), 0.72); // 0 (base) -> 1 (petal tip)
+
+                const petalShape = Math.pow(Math.abs(Math.sin(theta * (petalCount * 0.5))), 0.65);
+                const maxRadius = (tier === 0) ? 3.8 : (tier === 1 ? 6.8 : 9.8);
+                const r = v * maxRadius * (0.35 + 0.65 * petalShape);
+
+                // Petals cup upward gracefully
+                const petalCupY = Math.pow(v, 1.25) * ((tier === 0) ? 6.4 : (tier === 1 ? 5.2 : 3.6))
+                                + petalShape * v * 1.4;
+
+                posBookLotus[i3]     = Math.cos(theta) * r;
+                posBookLotus[i3 + 1] = -2.2 + petalCupY;
+                posBookLotus[i3 + 2] = Math.sin(theta) * r;
+
+                // Lotus tips glow with warm golden-rose accent
+                aColorMix[i] = 0.35 + v * 0.55;
+            } else {
+                // 3) Swirling Chalk-Stardust Vortex & Orbital Constellation Rings emerging from the Book
+                const idx = i - 10400;
+                const ratio = idx / (PARTICLE_COUNT - 10400);
+                const spiralAngle = ratio * Math.PI * 18;
+                const strand = idx % 3;
+
+                if (strand < 2) {
+                    // Ascending double-helix stardust ribbons from book pages into the cosmos
+                    const radius = 5.5 + ratio * 19.5 + (Math.random() - 0.5) * 1.8;
+                    const y = -4.5 + ratio * 18.5 + Math.sin(spiralAngle * 2.0) * 1.5;
+                    const offset = strand * Math.PI;
+                    posBookLotus[i3]     = Math.cos(spiralAngle + offset) * radius;
+                    posBookLotus[i3 + 1] = y;
+                    posBookLotus[i3 + 2] = Math.sin(spiralAngle + offset) * radius;
+                    aColorMix[i] = 0.72 + Math.random() * 0.25;
+                } else {
+                    // Tilted Astrolabe Halo Ring of Knowledge
+                    const ringAngle = Math.random() * Math.PI * 2;
+                    const ringR = 19.5 + (Math.random() - 0.5) * 1.4;
+                    const rx = Math.cos(ringAngle) * ringR;
+                    const rz = Math.sin(ringAngle) * ringR;
+                    const ry = Math.sin(ringAngle) * 5.2 + 2.0;
+                    posBookLotus[i3]     = rx;
+                    posBookLotus[i3 + 1] = ry;
+                    posBookLotus[i3 + 2] = rz;
+                    aColorMix[i] = 0.85;
+                }
+            }
+
+            // ==================================================================
+            // TARGET B: CELESTIAL BOAT OF KNOWLEDGE ("CON ĐÒ TRI THỨC")
+            //           + LUMINOUS FOUNTAIN PEN / LANTERN + GALAXY WAVES
+            // ==================================================================
+            if (i < 5600) {
+                // 1) "Con Đò Tri Thức" - Traditional Poetic Vietnamese Wooden Boat Hull, Prow & Canopy
+                const idx = i;
+                // Normalized length along the boat hull: s in [-1, 1]
+                const s = (Math.random() * 2.0 - 1.0);
+                const boatHalfLength = 16.5;
+                const x = s * boatHalfLength;
+
+                // Boat width tapers smoothly to 0 at bow (s = 1) and stern (s = -1)
+                const widthEnvelope = Math.max(0.02, Math.cos(s * Math.PI * 0.5));
+                const maxHalfBeam = 4.6 * Math.pow(widthEnvelope, 0.78);
+                // Sweeping upward curve at bow and stern ("Mũi đò cong vút")
+                const sheerCurveY = Math.pow(Math.abs(s), 2.15) * 4.8;
+
+                if (idx < 4200) {
+                    // Boat Hull Planks & Gunwale Rim
+                    const u = (Math.random() * 2.0 - 1.0); // cross-section from port (-1) to starboard (+1)
+                    const isGunwale = (idx % 6 === 0);
+                    const crossU = isGunwale ? (u >= 0 ? 1.0 : -1.0) : u;
+                    const z = crossU * maxHalfBeam;
+                    // Hull cross-section depth
+                    const hullDepth = (crossU * crossU) * 2.85 * widthEnvelope;
+                    const y = -6.8 + sheerCurveY + hullDepth;
+
+                    posBoatLantern[i3]     = x;
+                    posBoatLantern[i3 + 1] = y;
+                    posBoatLantern[i3 + 2] = z;
+                } else {
+                    // Arched Bamboo Canopy ("Mui Đò") & Gentle Oar ("Mái Chèo")
+                    if (idx < 5200 && Math.abs(s) < 0.42) {
+                        const canopyS = (Math.random() * 2.0 - 1.0) * 0.4;
+                        const canopyX = canopyS * boatHalfLength;
+                        const archAngle = (Math.random() - 0.5) * Math.PI;
+                        const canopyW = 4.1 * Math.cos(canopyS * Math.PI * 0.5);
+                        posBoatLantern[i3]     = canopyX;
+                        posBoatLantern[i3 + 1] = -4.2 + Math.cos(archAngle) * 2.9;
+                        posBoatLantern[i3 + 2] = Math.sin(archAngle) * canopyW;
+                    } else {
+                        // Poetic Oar extending into the stardust river
+                        const oarT = Math.random();
+                        posBoatLantern[i3]     = -5.5 - oarT * 8.5;
+                        posBoatLantern[i3 + 1] = -4.2 - oarT * 3.6;
+                        posBoatLantern[i3 + 2] = 2.8 + oarT * 6.5;
+                    }
+                }
+            } else if (i < 9800) {
+                // 2) "Ngọn Bút Tri Thức & Hoa Đăng Tri Ân" hovering majestically above the Boat
+                const idx = i - 5600;
+                if (idx < 2800) {
+                    // Sculpted Fountain Pen Nib ("Ngòi Bút Vàng Tri Thức") + Slit & Breather Hole
+                    const v = Math.random(); // 0 (base collar) -> 1 (sharp golden nib tip at top)
+                    const nibHeight = 10.5;
+                    // Nib silhouette: widens from collar, then tapers to a fine point
+                    const nibWidth = (v < 0.45)
+                        ? (1.6 + (v / 0.45) * 1.9)
+                        : (3.5 * (1.0 - (v - 0.45) / 0.55));
+                    const side = (idx % 2 === 0) ? 1 : -1;
+                    const u = (idx % 9 === 0) ? 0.02 : Math.pow(Math.random(), 0.7); // central ink slit highlight
+                    const px = side * u * nibWidth;
+                    const py = 0.2 + v * nibHeight;
+                    const pz = Math.cos(u * Math.PI * 0.5) * (1.35 * (1.0 - v * 0.65));
+
+                    // Tilt the Fountain Pen Nib gracefully at a 25-degree writing angle
+                    const penTilt = -0.32;
+                    posBoatLantern[i3]     = px * Math.cos(penTilt) - (py - 4.0) * Math.sin(penTilt);
+                    posBoatLantern[i3 + 1] = px * Math.sin(penTilt) + (py - 4.0) * Math.cos(penTilt) + 4.2;
+                    posBoatLantern[i3 + 2] = pz;
+                } else {
+                    // Blazing Plasma Lantern Flame / Beacon of Wisdom at the Tip of the Pen
+                    const u = Math.random();
+                    const theta = Math.random() * Math.PI * 2;
+                    const flameH = u * 5.2;
+                    const flameR = Math.sin(u * Math.PI) * (1.65 * (1.0 - u * 0.4));
+                    posBoatLantern[i3]     = 2.6 + Math.cos(theta) * flameR;
+                    posBoatLantern[i3 + 1] = 10.2 + flameH;
+                    posBoatLantern[i3 + 2] = Math.sin(theta) * flameR;
+                    aColorMix[i] = 1.0; // Pure Golden Lantern Flame Channel
+                    aScale[i] = 2.15;
+                }
+            } else {
+                // 3) "Sóng Ngân Hà Đưa Đò" - Flowing Sinusoidal River of Stardust Waves beneath the Boat
+                const idx = i - 9800;
+                const ratio = idx / (PARTICLE_COUNT - 9800);
+                const waveX = (Math.random() * 2.0 - 1.0) * 26.0;
+                const waveZ = (Math.random() * 2.0 - 1.0) * 18.0;
+                const waveY = -8.2 + Math.sin(waveX * 0.35 + waveZ * 0.25) * 1.35
+                            + Math.cos(waveX * 0.2 - waveZ * 0.4) * 0.85;
+
+                posBoatLantern[i3]     = waveX;
+                posBoatLantern[i3 + 1] = waveY;
+                posBoatLantern[i3 + 2] = waveZ;
+                aColorMix[i] = 0.68 + 0.28 * ratio;
+            }
+
+            // ==================================================================
+            // SUPERNOVA & RISING SKY LANTERN VECTORS (DOUBLE CLICK CELEBRATION)
+            // ==================================================================
+            const phi = Math.acos(2 * Math.random() - 1);
+            const lam = Math.random() * Math.PI * 2;
+            const speed = 16 + Math.random() * 36;
+            // Bias slightly upward like thousands of sky lanterns ("Hoa đăng bay lên trời")
+            posSupernovaVel[i3]     = Math.sin(phi) * Math.cos(lam) * speed;
+            posSupernovaVel[i3 + 1] = Math.abs(Math.sin(phi) * Math.sin(lam)) * speed * 1.15 + 4.0;
+            posSupernovaVel[i3 + 2] = Math.cos(phi) * speed;
+        }
+
+        /* ----- CHÂN DUNG CÔ HẢI: mảng đích & màu cho 14.000 hạt chính (được nạp sau khi ảnh giải mã xong) ----- */
+const posFace = new Float32Array(PARTICLE_COUNT * 3);
+const colFace = new Float32Array(PARTICLE_COUNT * 3);
+
+particleGeometry.setAttribute('position', new THREE.BufferAttribute(posBookLotus, 3));
+particleGeometry.setAttribute('aTargetFace', new THREE.BufferAttribute(posFace, 3));
+particleGeometry.setAttribute('aFaceColor', new THREE.BufferAttribute(colFace, 3));
+        particleGeometry.setAttribute('aTargetCake', new THREE.BufferAttribute(posBoatLantern, 3));
+        particleGeometry.setAttribute('aSupernovaVel', new THREE.BufferAttribute(posSupernovaVel, 3));
+        particleGeometry.setAttribute('aScale', new THREE.BufferAttribute(aScale, 1));
+        particleGeometry.setAttribute('aColorMix', new THREE.BufferAttribute(aColorMix, 1));
+        particleGeometry.setAttribute('aPhase', new THREE.BufferAttribute(aPhase, 1));
+
+        // Custom GLSL Shader for 14,000 Particles: Book <-> Boat Morphing + 3D Mouse Swirl + Spacebar Shockwave
+        const particleShaderMaterial = new THREE.ShaderMaterial({
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+            uniforms: {
+                uTime: { value: 0 },
+                uMorph: { value: 0 },          // 0: Open Book & Lotus, 1: Celestial Boat & Pen Lantern
+                uVortexCharge: { value: 0 },
+                uFace: { value: 0 },   // Swirl intensity during hold
+                uSupernova: { value: 0 },      // Sky Lantern Supernova burst
+                uShockwaveTime: { value: -10 },// Spacebar spherical shockwave timer
+                uMouse3D: { value: new THREE.Vector3(0, 0, 0) },
+                uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
+                uColorPrimary: { value: activeColors.primary },
+                uColorSecondary: { value: activeColors.secondary },
+                uColorAccent: { value: activeColors.accent },
+                uColorFlame: { value: activeColors.flame }
+            },
+            vertexShader: `
+                attribute vec3 aTargetCake;
+                attribute vec3 aSupernovaVel;
+                attribute float aScale;
+                attribute float aColorMix;
+                attribute float aPhase;
+                attribute vec3 aTargetFace;
+                attribute vec3 aFaceColor;
+
+                uniform float uTime;
+                uniform float uMorph;
+                uniform float uVortexCharge;
+                uniform float uFace;
+                uniform float uSupernova;
+                uniform float uShockwaveTime;
+                uniform vec3 uMouse3D;
+                uniform float uPixelRatio;
+                uniform vec3 uColorPrimary;
+                uniform vec3 uColorSecondary;
+                uniform vec3 uColorAccent;
+                uniform vec3 uColorFlame;
+
+                varying vec3 vColor;
+                varying float vAlpha;
+
+                void main() {
+                    // Smooth interpolation between Open Book of Knowledge (0) and Celestial Boat & Pen (1)
+                    float m = smoothstep(0.0, 1.0, uMorph);
+                    // Gương mặt cô Hải: mỗi hạt có độ trễ riêng nên hội tụ như một cơn mưa sao
+                    float fe = smoothstep(0.0, 1.0, clamp(uFace * 1.7 - aPhase * 0.095, 0.0, 1.0));
+                    vec3 basePos = mix(mix(position, aTargetCake, m), aTargetFace, fe);
+
+                    // Gentle page-breathing / river-wave undulation
+                    float waveMotion = sin(uTime * 1.65 + basePos.x * 0.22 + aPhase) * 0.26;
+                    basePos.y += waveMotion * (1.0 - fe * 0.85);
+
+                    // Flickering golden plasma flame at the tip of the Fountain Pen Lantern
+                    if (aColorMix > 0.95 && m > 0.4) {
+                        basePos.x += sin(uTime * 8.5 + basePos.y * 1.8) * 0.28 * m;
+                        basePos.z += cos(uTime * 7.2 + basePos.y * 1.8) * 0.28 * m;
+                    }
+
+                    // Interactive 3D Mouse Chalk-Stardust Swirl & Gentle Levitation
+                    vec3 toMouse = basePos - uMouse3D;
+                    float mouseDist = length(toMouse);
+                    if (mouseDist < 9.5) {
+                        float influence = pow(1.0 - mouseDist / 9.5, 2.0);
+                        basePos += normalize(toMouse + vec3(0.001)) * influence * 2.4 * (1.0 - fe * 0.92);
+                        basePos.y += influence * 1.35 * (1.0 - fe * 0.92);
+                    }
+
+                    // Swirling Galaxy Vortex when holding mouse/touch to turn pages & crystallize
+                    if (uVortexCharge > 0.001) {
+                        float angle = uVortexCharge * 3.8 * (1.0 / (length(basePos.xz) * 0.07 + 0.55));
+                        float s = sin(angle);
+                        float c = cos(angle);
+                        mat2 rot = mat2(c, -s, s, c);
+                        basePos.xz = rot * basePos.xz;
+                        basePos *= (1.0 - uVortexCharge * 0.14);
+                    }
+
+                    // 3D Spherical Shockwave Ripple when pressing [SPACE]
+                    float shockAge = uTime - uShockwaveTime;
+                    float shockGlow = 0.0;
+                    if (shockAge > 0.0 && shockAge < 2.2) {
+                        float waveRadius = shockAge * 26.0;
+                        float distFromCenter = length(basePos);
+                        float band = abs(distFromCenter - waveRadius);
+                        if (band < 4.5) {
+                            float pulse = smoothstep(4.5, 0.0, band) * (1.0 - shockAge / 2.2);
+                            basePos += normalize(basePos + vec3(0.001)) * pulse * 3.2;
+                            shockGlow = pulse;
+                        }
+                    }
+
+                    // Sky Lantern & Petal Supernova Burst on Double Click
+                    if (uSupernova > 0.001) {
+                        basePos += aSupernovaVel * pow(uSupernova, 0.85);
+                    }
+
+                    vec4 mvPosition = modelViewMatrix * vec4(basePos, 1.0);
+                    gl_Position = projectionMatrix * mvPosition;
+
+                    // Dynamic twinkle & perspective size attenuation
+                    float twinkle = 0.76 + 0.44 * sin(uTime * 3.0 + aPhase * 3.0);
+                    float flameBoost = (aColorMix > 0.95) ? (1.0 + m * 0.9) : 1.0;
+                    gl_PointSize = aScale * twinkle * flameBoost * mix(1.0, 0.5, fe) * (1.0 + shockGlow * 0.8) * uPixelRatio * (168.0 / -mvPosition.z);
+
+                    // Multi-channel luxury 20-11 color blending
+                    vec3 col = mix(uColorPrimary, uColorAccent, smoothstep(0.15, 0.55, aColorMix));
+                    col = mix(col, uColorSecondary, smoothstep(0.55, 0.88, aColorMix));
+                    if (aColorMix > 0.92) {
+                        col = mix(col, uColorFlame, m);
+                    }
+                    // Radiant white-gold core during vortex charge, shockwave, or supernova
+                    col = mix(col, vec3(1.0, 0.98, 0.90), uVortexCharge * 0.4 + shockGlow * 0.65 + uSupernova * 0.45);
+
+                    col = mix(col, aFaceColor * (0.92 + 0.2 * sin(uTime * 2.0 + aPhase)), fe);
+                    vColor = col;
+                    vAlpha = (0.7 + 0.3 * sin(uTime * 2.2 + aPhase)) * (1.0 - uSupernova * 0.32);
+                }
+            `,
+            fragmentShader: `
+                varying vec3 vColor;
+                varying float vAlpha;
+
+                void main() {
+                    vec2 uv = gl_PointCoord - vec2(0.5);
+                    float dist = length(uv);
+                    if (dist > 0.5) discard;
+
+                    float core = smoothstep(0.5, 0.0, dist);
+                    float halo = pow(core, 2.1);
+                    vec3 finalColor = vColor + vec3(0.48) * pow(core, 4.8);
+
+                    gl_FragColor = vec4(finalColor, halo * vAlpha);
+                }
+            `
+        });
+
+        const mainParticleSystem = new THREE.Points(particleGeometry, particleShaderMaterial);
+        universeGroup.add(mainParticleSystem);
+
+        /* ==========================================================================
+           4B. PORTRAIT ENGINE — ảnh chân dung (đầu, vai, bó hoa) -> ~32.000 hạt đa màu
+               1) Giải mã ảnh JPEG màu + mặt nạ tách nền (nhúng sẵn trong file)
+               2) Trọng số theo độ sáng, rải hạt bằng Floyd–Steinberg serpentine (blue-noise stipple)
+               3) Mỗi hạt lấy đúng màu pixel ảnh, bay về với độ trễ riêng
+           ========================================================================== */
+        const PORTRAIT_JPG = "data:image/jpeg;base64,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";
+        const PORTRAIT_MASK = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXMAAAFqCAAAAADNCOUdAAAUJElEQVR42u2dXa8sx1WG31X4v3CLdIDIFwkiwcSRLbghsRNHYn7aWMjEiJBgCHaOj33sBAFSFAkuEf/Ftbjo+lirPuazu2a6e9XZZ/Z87N0z++m337VWVXUXYM2aNWvWrFmzZs1au9GD3//z9BneMuaLt18TCKQ/wV8Y88WBE6j4DPw9Yz57+xRE8QtJ59PH4HDz3W0zf2M0chLIBfQkAKYJ/dReMvgHpvO72mcT8uwslbcADPzZ9OALMDOYmd8x5je1fyNKxLO3CGtJ3sLx3wR8un3XmN9GnEB03s8zcwn9HWN+E3KiU34ukIMV9Km9a8yvDJ0COUEIvfTzwlok9HeM+VWhUyNPEVRDZ2Eu2s89/Fag0zCRuzv8PDf/rjG/CLkj1VSyWH4C1kLX0Lch9eVrok9dErlUei8/p+mLiYmZmBkUgQOOvXnLJVbuSEG/1c+T0H9gOj+3UwuZn/YWAoMYWeaTygE4ZvZwpvPz7SXV0C/Oz7Wh+3Dj3zbmJ9vnibjIW7reEhKXiXv2FhlDPbNfub3Qwip3FL5myFt8pL5y6G8sjdxV5oKb8hYPOGbv2DvveNU6dwvHz6BzKXTniFz6F15zLn4nl18icvFXpx8Iv0q/Nm9pt1eR7Xwx1Cd3+b4xb4dPp/zchQh6c+2fifs1Zy8LMv8i+8cdOkcrhLJfM3RaHLnUea+PqztOdELn64W+XAyNKndT0EwxcgqbUzCMr6XoGl+U8dW5VoBdcSBdTOdfRjx1fi5Kojv83LPnt03nVT9LcJSUDQbBimRxcnuXs8j8Yi5enUulbN57jog+s5pImLnOwbsx9NI+LseO2SNWRAzvPDlPxlzEz6ZcLxknIgaFMpMY6T4AOA8QnAeBJuRk3qKMJUI/EUMpvXZhDE2vxgcvTeeJubTeM95SmAtPt8RB8MST0l0cJ6Ig87AVy1um9ppcTusuyc9vzFu8Z/+X5i3BWrTMHSUDyamJeu2GvCW0l+Ytk8wT7lN9uWm6IpXWku7TFFUZjilEUeeddz5EUawyjC7A/LVzd/l5yhULP2ePKWlx3sE7H43K/BxfRi93qaf8ZB3a6uM6NU40OXpwc+89r+5EpPn9vLDxog7NrynLLl7LmygHO2QkCKHgc/OWpp105ivmOpQuPCqdj0dISoHImJOcQuSovNOaUxQTRha2rh5M46FhF4UYSiAi54058LU0A+qO+reYc0Uv5C3pJ5wPQp/ylpVG0bmZf0Vn28lTuPqBJws9/vpambvZncUV8xNb5u7ognbqd5wIqvTlvnX+FRGyAJWZ9HRe5opigkud1kadT9vgOKa9a53TZToXs6L1/tAPzmk/ZpJf7lrndF7neuZcVDmFLi6KSkcVVcMZuw2d096ZXxlCqxjKnRym4S35UNkx89+cx96aIKrm/BM4SDoIPjxUzNmYxwiKTsnZr0Kr8VBwGBSlBB2MMDoxPTFtgI25dhaUIRFonEyk3BxNRxfpTJR5VDkoOvqe85Zm2FRxjig7chCvhBbuikKVij2JcsMAiL7erc6/PuXhVUduIzdP7pL70EvnEUE0bZZXpvQ5mWd3lV0qGjrayCk6y/SAkeb9x5Aaomg0dJ5Y0xqTxRmZfxXGlcUwc8toUPa0NMCHKBqNPAg/5udMPAEHVsl8Rj+n1PPUyFtiklIO+FfTJYiUjegjBeoKDeIw2ilz2aMIFLMqyjPmxD5o7DsBPcTabgwNO+i3e81baj+nws+Fm1OHeKKeLD88Uulm3XG2R+av8yFeCjyzzXeAk/3lqs7PrhW3Dflwx35OhbeQTFzy86kcOm3CEnpimyKwtJZpF6zJXGbKW145ytyL0idWPsjOchZ5mpQ7zXMJaaTOFUOvIodegB3qXBziZa6YgIs88XyqQSp7EcdJ21t+89XemKcqXuUtOVwmH7gYef4xUvEgD4Wi7jTYE/PPSag47AIxXJx6UQRHXAY9zWnUeU+6J/by630x19mFjqG5NL12BpHgThD7UtZEcp98sSfmL0UOkfCj0vkVEpfuIsoi6IkxaccSXbcn18/8s+gdZXQrRiaoPSv0rMrznVLn2nv25C0kakciVb+n7FrWnHS1b1XZ5u51DmSyKGxGVKF0AxUqE6Na5+kY2lPe8qms71t5S9LobeBVt6HoEMhVAa2LupvHWkj0m6v8XJrCzb4FFCl+shaVn69lbtG9tf8nzjU6CamdFdJN/gJxahE4nc049Q7k/nMi4NVbO9G56LHKnXzSeIE7QlyRYRYxtOE+m2f+SylyWbmUPbGEGfIKgZiKIyb42cs96JyolTlQ7SF0a+oiN6q2S+rACtQ/2zzzX5DqjUIeL1P5OXCHygnFNLuGtxDhzndZDfOfi6Qieq0qj2YkQM1dUHrL5v38H1X/U9NMdF0+7y5QtX+uFjau86TkMkIS9Zyc7gNNSvCij6cZQ7aaK1Lh590K8tzu6zqDuC4AyQ6YAn+896utM6daiaQzFLpo+JMufS/qPLo3Uq+wJqJ69uH9O/AC8i2D33Dt/7E70TkiHGG2qMnyXnmtLmFS//JX++jjusofcHJnXX9YlL/2zzvwln5gHeCvK7yAi5tN5uc9mO4y8u4PU7Wff7EXndO90XG+D0D/tENvWfCYuaZE3hrzn13zwzzzz51v/7ALnfOgX+XeE5zuPvkSI24E67zs0PyN68/x7Ku6OCwhdE4PeSnzEJtc28o5DiOEfuEm+Krf4FPHFD7eHvOPzqHjuRXIFWwuX2b57N9vUefSSZnb1toBdPsBwx2V8wp8fCZvKf9yDitPXptEMJ//Qa6DBZ+IpFtlzkHgFTG+Orwxn7RuDntUmVf8rZr9UwdWd4/ClX9yL29hsfjtDCgKvnlHcPGBPtqezhvHNYvvMoYyz4g671HuVUb83B7jZsDACXfDz2f+45OZsPaU/PD5HX2WGMpc+rHw8ysSl5N2zkURxNlQuDzUeKvMw5/LVUHIUvlCfncaejiGyu0yuJn6MG9S54XK007gyCRg4PsNnZuyF/rOH+LpU3V3L4OCOutDnOtYy3dZS1rVRe7hbOT5IeOnW2P+U67Ke9Z5Cyc4jDk6A8JSC1nIrIoAVQnzNvOWD6Kuw2HNjbyFRTHDNx9PqhJgsaBrTk5F3rKCbsbb/fwnrMshVRNxqxTlW6NoYS35K+7kVAwzz1V6PXGuGBTMGQDHeBZjKPPtfSJZ5pzTlrRpbsRQlPXxppj/OEdMLmpNZhX8BK9bUBTJudyVeSeLx3hypd89ZsHSXWqdF/K7smQRphLe4LTOuejt2WR+HtdsQlEccaoQOek8p3mXEmEdIbnQOdc6j8AZz5sq3sX8fZT9HTmkcayEuOppvUblOu4qnRd5S9wB0dc+2LK3sNByfipWJwylRr6Suyj0y9CMrPOyw2vLfVzvie5bLnaAXgU0lzWXuwuXnTdxV2Y5c6xDtdFsuC9X5SRo/P1xqT5p6BcHuewsuctG7MoYK8oxJGDj+fl70k44dWsXMVR1CjAuSxpZxVCWFpbXXCxf4XwMbLcm+pHKHLK96iNfHg2XQW+P58kjiVWU5nJgdMPMRX6imvaW6imAcWbYuVhGNG0ihoich0KZV9gtH2yY+Q9F8ESZtwhSeVyHW/3ftchlr20OoWDu5ucQudEHW9Y5/kZVPFJtWZJKqRo694iLaJlQq+OlWBOd5bjRT57aW+aYZf+Joz9wuk2LzctFuMnlC9x0Vm1BOW+osBa50nxYnXi6/Ya/8amx5/exeeYAPnU1dHL1uufthc86OUuFPK0I7aebyN1777+JxD2/9+QxdKbrQstqJJvIpFQSScp0Wmdc1nxadut8AJXZaGkwytEBZjw78hnPrnqljKW/7nm1zDy1i/2c559e91w39j98+lxxvnVb3sJrnbExcXeCRb6iWftkFRVB+fK2igx9zvPmvisPfHTuJ79IZU3lUgq5rDU7eQtUtz12pHMAf47fyuIlJYXh6nwsLtM3GXpYRrHf0XKhykWRtDOdA/hOh4fuCiyeqGXeQa4f617MPJyxL51DZC1M3ZozryDfEvqVMoferWuAPjfz7+A/xGHerfPzpUDC7dmk5VKL2aHOJ6VTl7m65oq8JGsjN78BOfao84m5d8zeTeC8k8y5dYkh7pegCrqfcnSRrssnsJJUcSHmMm8hPtGHWF9uiE/oHM3+YvnM7vLzduoSxen99L98sf+EL1/3jdd8sQt2qXN8G/ivyV7EpGUA8JdcU4j73nJyh2E9QfSNRbb6Jn4HZu+8m9zcq8OpscR2v0sRfObQ8H5Vhf9izIE/xe9jEC3HPttLmnez86KLK/dz1WkLeMc6B4A/Bv4nJi6F0CfS5Qrbpcyhe2t8LXbveX1uviRzAH8Uvv8f4MlF1iSlPS33TCXyTkmUxom4LfS91kQdk5b5eTL0eIepVRFVzGtL8fV4qDEHAPzh/zrAp2vyT6RZLGyuLzLUiaE+fkvDodHk/apkPui6c2XarW5bRp3jZPJsaSh/4tUvQA37m86DeBt+zhSsRbh76JM97ecvgHDf1w5jfi5YetLmEhIXDqNzBC6TxTI/D+OhLwC8mbf9r6p7y2JobEnlUelR2rk84kvz8xd1/w6sJjrlLUxEgfo0OqcmXPD5vOVFo0/N59mL2GUfV6P991TAeO+9mhmUQ6NPr4p8sOwU81yrHPhrMQfGaqLYfs+eKLnLJPI8sUjNK2p3n4M9pn3zomVcvK6huRHMf8feiRhKrRhKomrSZ8VonTeNS0z9tbwFAP6TvFMxNDh6hq7mFXGvv6VtLIE5Yy3z/Ucw/3dPzpPLKp90npDLWYvndP4CXebM811kbe3Mv/YOhc5T1hKrolLnZdqCU8aS3GVFV81dlPkr512tc2KadI6sc1UT9cYsOu/yo4/zNKTdx9CX7F2t81D8az+vLhbS0Pm3eu/zPj5aE/IFV5r4FdVT/sVsaLEiZdlN0Nb5t8694YcAA4cdM/8k8E7ExZkWpJcYxkV9XG9iK20pb/klT1YezTw7OiY7B+WSqJpT1Bqb2wzypXT+82AqLWuRMidxIld5Zbkyhn7bdH6uU8shx0+fS/8g86r25xO1P8PDs3nLOeaYkkRP039R+lPwlulf7S2dcX9jfp55BI8yPW/VoZd4S+NtfvbcJ5k/gLknh0zcBV9p+znxudr/e70CdHVtof7z9+O8Nh9upj7y+JzXZzPnV+WL6ZzbvrWs03CWyhUTjCD2qvS/2s/b78LGPLUf5/XoPBWNKWTnxKDm/PPUgZLN5fund60xD9An+y7m5MZUMcqc9EkvnbnQb8N03m5Hwt9m6GFE3xflUC+GVnkL5JV2YDrvMZDXBVGmwY5l6a9qIjW5pepv6c+J+7t16nzuvIU/lImcHNJvXRHhm8bDcKNfeqdrLR/uq7/l2N1iso5gJuG2Zy3tcX9h6CjPYJELN1z9uQ/rZX48sUkCIlrNHbcwR3WJBtyB/OHQ35ibOOK0T05nl09PBCsH557cdl9uOZEL+hSt4tp12Ki3HG/YKCWHCV/if2/I4qTQNfA7l2c5PDvz421bJeUwEINyXWtpMIfwkxlFfnha5se7tksymCreEjnVGbe8sjyX3+fylcMzMj/evWHK3El8OyFzzRxN3s0l/tZEnRbArfwlSx0FcCXzcqiogK4vejTXJNzD0zA/zrltanFPVg996blqVhFQOspsIn8gdFqIdyF1yVkiLy/2xxI6WP2T1w6YK0U8PJ75cYmti3Ba8m5dS1RfhbtYX272pYcOD2V+XG772mRaxItrQ2mpy3W35u9MPDyM+XHZN5DU1VdX5+UyZwsRfwR0Whh5Sb2QOKHWuTR1SXu5U4YGUx9wDpe4oHlc7aY6Xz+f4FVfCkouJrdM98pxc8w19fr0w+ZFcby6HOvSy1Uct+Yt6o0IRU7euRa3HjjCchp/gL+4UW/Eeg1Gfd3i1vXkwMVqsMt+vuMGmYtlD9Wqk61rU4plSdX60huBToPfkJrVGKG2jwcsH3fYnM6jyNXSXeK+fkUvZDemHbfJvODYvu5t4we3BH20t/T7elrJywPaYZs61yK/7NktSf2RzNv28ujPM6xUeYy5PGs7jNH5wUgPk7ozwi3oR2O+Lakb8/FSN+bjmzEfr3Q3sP4yUzedP0rqxny81Glk0WtVqen8QVJ3C+5Pg246f5ZQaszHUzfm4w3GmI+H7pZMigy66fxJoBvz8ZHUmI+nbszHG4wxHw/dmI/3F1om7d96O5jO12Uwxny8wTizluFSN52PlzqZzIfHUtP5eIMx5uMNxpm1DJe66Xy81I35eOrOrGW4wZjOx0N3JvPh0E3n46Eb8/GRlMxZhncFOEM+3F/IgA9Xuvn5eKUb8/HNmBtzY27NmFveYs10bsytGXNjbsytGXNjbs2YP3M7GvOnhG7MZ4d+NObPJ3VjPh66MR8P3ZiPh27Mx0M35uOhG/PxOaMxHy91Yz5e6sZ8vNSN+Xjoxnw8dJuXO6wdTOePa8Z8fBZjzE3ne1C6MTed70Hpxnx8vm7Mx0M35uOhG3OLocbcmjE35taMuTG3ZsyNuTG3ZsyNuTVjbsytXdkOxnw4ctP5eOTGfDxyYz4euTEfj9yYj0duzMcjN+bjkRvz8ciN+XjkxvwBzZgbc2NuzZgbc2vG3JhbM+bG3JhbM+bG3JoxN+bWLmkHY/5I5MbcvGUPMjfm45Ebc/OWPcjcmJvO9yBzYz4euTE3b9mDzI35eOTG3LxlDzI35qbzPcjcmI9HbszNW/Ygc2M+HrkxN2/Zg8yN+Xjkxty8ZQ8yN+bjkRtz85Y9yNyYj0cOdzBE473FoA+WOQjA6dXorc3N3F30U9YWyFsM+jiZp7zFoA9DbrnieOTGfDxyYz4euTEfj9yYj0duzMcjx/8DuKgtL3RSGC0AAAAASUVORK5CYII=";
+        const PORTRAIT_SIZE_H = 30.0, PORTRAIT_CY = 1.5;
+        const FACE_EXTRA = 18000;
+
+        const extraStart = new Float32Array(FACE_EXTRA * 3);
+        const extraTarget = new Float32Array(FACE_EXTRA * 3);
+        const extraColor = new Float32Array(FACE_EXTRA * 3);
+        const extraPhase = new Float32Array(FACE_EXTRA);
+        for (let i = 0; i < FACE_EXTRA; i++) {
+            const phi = Math.acos(2 * Math.random() - 1), lam = Math.random() * Math.PI * 2, r = 18 + Math.random() * 26;
+            extraStart[i * 3]     = Math.sin(phi) * Math.cos(lam) * r;
+            extraStart[i * 3 + 1] = Math.cos(phi) * r * 0.7;
+            extraStart[i * 3 + 2] = Math.sin(phi) * Math.sin(lam) * r;
+            extraPhase[i] = Math.random() * Math.PI * 2;
+        }
+        const extraGeometry = new THREE.BufferGeometry();
+        extraGeometry.setAttribute('position', new THREE.BufferAttribute(extraStart, 3));
+        extraGeometry.setAttribute('aTarget', new THREE.BufferAttribute(extraTarget, 3));
+        extraGeometry.setAttribute('aColor', new THREE.BufferAttribute(extraColor, 3));
+        extraGeometry.setAttribute('aPhase', new THREE.BufferAttribute(extraPhase, 1));
+        const portraitMaterial = new THREE.ShaderMaterial({
+            transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+            uniforms: {
+                uTime: { value: 0 }, uFace: { value: 0 }, uSupernova: { value: 0 },
+                uMouse3D: { value: new THREE.Vector3(0, 0, 0) },
+                uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) }
+            },
+            vertexShader: `
+                attribute vec3 aTarget;
+                attribute vec3 aColor;
+                attribute float aPhase;
+                uniform float uTime;
+                uniform float uFace;
+                uniform float uSupernova;
+                uniform float uPixelRatio;
+                uniform vec3 uMouse3D;
+                varying vec3 vColor;
+                varying float vAlpha;
+                void main() {
+                    float e = smoothstep(0.0, 1.0, clamp(uFace * 1.7 - aPhase * 0.095, 0.0, 1.0));
+                    vec3 p = mix(position, aTarget, e);
+                    float arc = sin(e * 3.14159);
+                    p += vec3(sin(aPhase * 3.0), cos(aPhase * 2.0), sin(aPhase * 1.7)) * arc * 7.0;
+                    p.y += sin(uTime * 1.4 + p.x * 0.3 + aPhase) * 0.07 * e;
+                    vec3 d = p - uMouse3D;
+                    float md = length(d);
+                    if (md < 7.0) {
+                        float inf = pow(1.0 - md / 7.0, 2.0);
+                        p += normalize(d + vec3(0.001)) * inf * 0.35 * e;
+                    }
+                    vec4 mv = modelViewMatrix * vec4(p, 1.0);
+                    gl_Position = projectionMatrix * mv;
+                    float tw = 0.82 + 0.3 * sin(uTime * 3.0 + aPhase * 3.0);
+                    gl_PointSize = (0.95 + (1.0 - e) * 0.9) * tw * uPixelRatio * (168.0 / -mv.z);
+                    vColor = aColor * (0.92 + 0.2 * sin(uTime * 1.7 + aPhase * 2.0));
+                    vAlpha = smoothstep(0.0, 0.2, e) * clamp(1.0 - uSupernova * 1.6, 0.0, 1.0);
+                }
+            `,
+            fragmentShader: `
+                varying vec3 vColor;
+                varying float vAlpha;
+                void main() {
+                    vec2 uv = gl_PointCoord - vec2(0.5);
+                    float dist = length(uv);
+                    if (dist > 0.5) discard;
+                    float core = smoothstep(0.5, 0.0, dist);
+                    float halo = pow(core, 1.6);
+                    gl_FragColor = vec4(vColor + vec3(0.12) * pow(core, 4.0), halo * vAlpha);
+                }
+            `
+        });
+        const portraitSystem = new THREE.Points(extraGeometry, portraitMaterial);
+        portraitSystem.visible = false;
+        portraitSystem.frustumCulled = false;
+        universeGroup.add(portraitSystem);
+
+        (function loadPortrait() {
+            const load = (src) => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = src; });
+            Promise.all([load(PORTRAIT_JPG), load(PORTRAIT_MASK)]).then(([ci, mi]) => {
+                const W = ci.naturalWidth, H = ci.naturalHeight;
+                const grab = (img) => {
+                    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+                    const cx = cv.getContext('2d', { willReadFrequently: true });
+                    cx.drawImage(img, 0, 0, W, H);
+                    return cx.getImageData(0, 0, W, H).data;
+                };
+                const cd = grab(ci), md = grab(mi);
+                const N = W * H, wgt = new Float32Array(N), lum = new Float32Array(N), faceA = new Float32Array(N);
+                let sum = 0;
+                for (let i = 0; i < N; i++) {
+                    if (md[i * 4] < 100) continue;
+                    const fa = Math.max(0, Math.min(1, (md[i * 4] - 160) / 95));
+                    faceA[i] = fa;
+                    const l = (0.299 * cd[i * 4] + 0.587 * cd[i * 4 + 1] + 0.114 * cd[i * 4 + 2]) / 255;
+                    lum[i] = l;
+                    wgt[i] = (0.35 + 0.65 * l) * (1 + 1.4 * fa);   // vùng sáng dày hạt hơn, vùng tối vẫn đủ hạt để giữ hình
+                    sum += wgt[i];
+                }
+                const scale = PORTRAIT_SIZE_H / H;
+                const smooth = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+
+                // Floyd–Steinberg serpentine: trả về danh sách pixel được đặt hạt
+                function stipple(count) {
+                    const k = Math.min(1, count / sum);
+                    const err = new Float32Array(N);
+                    for (let i = 0; i < N; i++) err[i] = wgt[i] * k + (wgt[i] > 0 ? (Math.random() - 0.5) * 0.25 : 0);
+                    const out = [];
+                    for (let y = 0; y < H; y++) {
+                        const dir = (y % 2 === 0) ? 1 : -1;
+                        for (let n = 0; n < W; n++) {
+                            const x = dir === 1 ? n : W - 1 - n, i = y * W + x;
+                            const o = err[i], q = (wgt[i] > 0 && o >= 0.5) ? 1 : 0;
+                            if (q) out.push(i);
+                            const e = o - q, xn = x + dir, xb = x - dir;
+                            if (xn >= 0 && xn < W) err[i + dir] += e * 7 / 16;
+                            if (y + 1 < H) {
+                                if (xb >= 0 && xb < W) err[i + W - dir] += e * 3 / 16;
+                                err[i + W] += e * 5 / 16;
+                                if (xn >= 0 && xn < W) err[i + W + dir] += e * 1 / 16;
+                            }
+                        }
+                    }
+                    // xáo trộn để hạt bay về theo hướng ngẫu nhiên
+                    for (let i = out.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = out[i]; out[i] = out[j]; out[j] = t; }
+                    return out;
+                }
+
+                function fill(idxList, count, posArr, colArr) {
+                    const n = idxList.length;
+                    for (let p = 0; p < count; p++) {
+                        const i = idxList[p < n ? p : Math.floor(Math.random() * n)];
+                        const x = i % W, y = (i - x) / W;
+                        const jx = (Math.random() - 0.5) * 0.9, jy = (Math.random() - 0.5) * 0.9;
+                        const ny = y / H;
+                        const p3 = p * 3;
+                        posArr[p3]     = (x + 0.5 + jx - W / 2) * scale;
+                        posArr[p3 + 1] = (H / 2 - (y + 0.5 + jy)) * scale + PORTRAIT_CY;
+                        // bó hoa nổi lên phía trước, gương mặt lùi nhẹ phía sau + chút nổi khối theo độ sáng
+                        posArr[p3 + 2] = 3.2 * smooth(0.30, 0.55, ny) + (lum[i] - 0.5) * 0.9 + (Math.random() - 0.5) * 0.35;
+                        // màu thật của ảnh: nâng sáng nhẹ + tăng độ rực để hạt lung linh
+                        let r = Math.pow(cd[i * 4] / 255, 0.9), g = Math.pow(cd[i * 4 + 1] / 255, 0.9), b = Math.pow(cd[i * 4 + 2] / 255, 0.9);
+                        const Y = 0.299 * r + 0.587 * g + 0.114 * b;
+                        r = Y + (r - Y) * 1.25; g = Y + (g - Y) * 1.25; b = Y + (b - Y) * 1.25;
+                        const cm = 1.1 + 0.15 * faceA[i];
+                        colArr[p3]     = Math.max(0, r) * cm;
+                        colArr[p3 + 1] = Math.max(0, g) * cm;
+                        colArr[p3 + 2] = Math.max(0, b) * cm;
+                    }
+                }
+
+                fill(stipple(PARTICLE_COUNT), PARTICLE_COUNT, posFace, colFace);
+                fill(stipple(FACE_EXTRA), FACE_EXTRA, extraTarget, extraColor);
+                particleGeometry.attributes.aTargetFace.needsUpdate = true;
+                particleGeometry.attributes.aFaceColor.needsUpdate = true;
+                extraGeometry.attributes.aTarget.needsUpdate = true;
+                extraGeometry.attributes.aColor.needsUpdate = true;
+            }).catch((err) => console.warn('Portrait load failed', err));
+        })();
+
+        /* ==========================================================================
+           5. 3D HOLOGRAPHIC CRYSTAL BUTTERFLIES & FLOATING GOLDEN LOTUS PETALS
+           ========================================================================== */
+        const BUTTERFLY_COUNT = 30;
+        const butterflies = [];
+
+        // Custom Wing Geometry (4 vertices forming Left & Right hinged wings)
+        function createButterflyGeometry() {
+            const geom = new THREE.BufferGeometry();
+            const vertices = new Float32Array([
+                // Left Wing (2 triangles)
+                0, 0, 0,   -1.35,  0.85,  0.4,   -0.95, -0.75, -0.3,
+                0, 0, 0,   -0.95, -0.75, -0.3,   -0.25, -1.05, -0.6,
+                // Right Wing (2 triangles)
+                0, 0, 0,    1.35,  0.85,  0.4,    0.95, -0.75, -0.3,
+                0, 0, 0,    0.95, -0.75, -0.3,    0.25, -1.05, -0.6
+            ]);
+            geom.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+            return geom;
+        }
+
+        const butterflyBaseGeom = createButterflyGeometry();
+        const butterflyShaderMat = new THREE.ShaderMaterial({
+            transparent: true,
+            side: THREE.DoubleSide,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+            uniforms: {
+                uTime: { value: 0 },
+                uFlapOffset: { value: 0 },
+                uWingColor: { value: activeColors.butterfly },
+                uAccentColor: { value: activeColors.primary }
+            },
+            vertexShader: `
+                uniform float uTime;
+                uniform float uFlapOffset;
+                varying float vWingDist;
+
+                void main() {
+                    vec3 pos = position;
+                    vWingDist = abs(pos.x);
+                    // Flap wings along the X axis hinge
+                    float flapAngle = sin(uTime * 15.0 + uFlapOffset) * 0.95;
+                    if (abs(pos.x) > 0.05) {
+                        float side = sign(pos.x);
+                        float c = cos(flapAngle);
+                        float s = sin(flapAngle);
+                        float xNew = abs(pos.x) * c;
+                        float yNew = pos.y + abs(pos.x) * s;
+                        pos.x = side * xNew;
+                        pos.y = yNew;
+                    }
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform vec3 uWingColor;
+                uniform vec3 uAccentColor;
+                varying float vWingDist;
+
+                void main() {
+                    vec3 col = mix(vec3(1.0), mix(uWingColor, uAccentColor, vWingDist * 0.7), smoothstep(0.0, 1.2, vWingDist));
+                    float alpha = 0.85 - vWingDist * 0.25;
+                    gl_FragColor = vec4(col, alpha);
+                }
+            `
+        });
+
+        for (let i = 0; i < BUTTERFLY_COUNT; i++) {
+            const mat = butterflyShaderMat.clone();
+            mat.uniforms.uFlapOffset.value = Math.random() * Math.PI * 2;
+            mat.uniforms.uWingColor.value = activeColors.butterfly;
+            mat.uniforms.uAccentColor.value = activeColors.primary;
+
+            const mesh = new THREE.Mesh(butterflyBaseGeom, mat);
+            const scale = 0.55 + Math.random() * 0.55;
+            mesh.scale.set(scale, scale, scale);
+
+            const angle = Math.random() * Math.PI * 2;
+            const radius = 10 + Math.random() * 18;
+            mesh.position.set(
+                Math.cos(angle) * radius,
+                (Math.random() - 0.5) * 18,
+                Math.sin(angle) * radius
+            );
+
+            universeGroup.add(mesh);
+            butterflies.push({
+                mesh,
+                velocity: new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.15,
+                    (Math.random() - 0.5) * 0.12,
+                    (Math.random() - 0.5) * 0.15
+                ),
+                orbitAngle: angle,
+                orbitRadius: radius,
+                orbitSpeed: 0.006 + Math.random() * 0.008,
+                verticalPhase: Math.random() * Math.PI * 2
+            });
+        }
+
+        /* ==========================================================================
+           6. 3D INSTANCED FLOATING GOLDEN LOTUS PETALS
+           ========================================================================== */
+        const PETAL_COUNT = 160;
+        const petalShape = new THREE.Shape();
+        petalShape.moveTo(0, 0);
+        petalShape.quadraticCurveTo(0.42, 0.35, 0, 1.05);
+        petalShape.quadraticCurveTo(-0.42, 0.35, 0, 0);
+
+        const petalGeom = new THREE.ShapeGeometry(petalShape);
+        const petalMaterial = new THREE.MeshBasicMaterial({
+            color: activeColors.accent,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.65,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+        });
+
+        const instancedPetals = new THREE.InstancedMesh(petalGeom, petalMaterial, PETAL_COUNT);
+        universeGroup.add(instancedPetals);
+
+        const petalDummy = new THREE.Object3D();
+        const petalData = [];
+
+        for (let i = 0; i < PETAL_COUNT; i++) {
+            const pos = new THREE.Vector3(
+                (Math.random() - 0.5) * 44,
+                (Math.random() - 0.5) * 38,
+                (Math.random() - 0.5) * 44
+            );
+            const rot = new THREE.Euler(
+                Math.random() * Math.PI,
+                Math.random() * Math.PI,
+                Math.random() * Math.PI
+            );
+            const scale = 0.25 + Math.random() * 0.45;
+            petalData.push({
+                pos,
+                rot,
+                scale,
+                riseSpeed: 0.02 + Math.random() * 0.04,
+                swayPhase: Math.random() * Math.PI * 2,
+                rotSpeed: new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.03,
+                    (Math.random() - 0.5) * 0.03,
+                    (Math.random() - 0.5) * 0.03
+                )
+            });
+        }
+
+        /* ==========================================================================
+           7. 3D ORBITING VIETNAMESE 20-11 POETIC WHISPERS (ULTRA SUBTLE)
+           ========================================================================== */
+        const WHISPER_TEXTS = [
+            "✦ Tri Ân Cô Nguyễn Thị Ngọc Hải ✦",
+            "✿ A1K64 Mãi Nhớ Ơn Cô ✿",
+            "✧ Chuyến Đò Tri Thức Ngàn Năm ✧",
+            "❀ Kính Chúc Cô Hải 20 • 11 Hạnh Phúc ❀"
+        ];
+        const whispersContainer = document.getElementById('whispers-container');
+        const whisperNodes = WHISPER_TEXTS.map((text, idx) => {
+            const el = document.createElement('div');
+            el.className = 'floating-whisper';
+            el.textContent = text;
+            whispersContainer.appendChild(el);
+            return {
+                el,
+                angle: (idx / WHISPER_TEXTS.length) * Math.PI * 2,
+                radius: 23.0,
+                yOffset: Math.sin(idx * 1.6) * 5.0
+            };
+        });
+
+        /* ==========================================================================
+           8. INTERACTION HANDLERS (HOLD MORPH, DOUBLE-CLICK LETTER, SPACEBAR, TAB)
+           ========================================================================== */
+        const raycaster = new THREE.Raycaster();
+        const normalizedMouse = new THREE.Vector2();
+        const planeZ = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+        const luxeCursor = document.getElementById('luxe-cursor');
+
+        window.addEventListener('pointermove', (e) => {
+            const nx = (e.clientX / window.innerWidth) * 2 - 1;
+            const ny = -(e.clientY / window.innerHeight) * 2 + 1;
+
+            // Follow with the luxury star cursor on precise pointers
+            if (e.pointerType === 'mouse') {
+                document.body.classList.add('has-luxe-cursor');
+                luxeCursor.classList.add('visible');
+                if (!interaction.cursorInitialized) {
+                    interaction.cursorX = e.clientX;
+                    interaction.cursorY = e.clientY;
+                    interaction.cursorInitialized = true;
+                }
+                interaction.cursorTargetX = e.clientX;
+                interaction.cursorTargetY = e.clientY;
+            }
+
+            // Drag to orbit a full 360 degrees around the Book / Celestial Boat
+            if (interaction.pointerDown && !interaction.letterOpen) {
+                const dx = e.clientX - interaction.prevPointerX;
+                const dy = e.clientY - interaction.prevPointerY;
+                interaction.dragDistance += Math.abs(dx) + Math.abs(dy);
+
+                // Small movement threshold keeps long-press morph separate from orbiting
+                if (!interaction.isDraggingOrbit && interaction.dragDistance > 6) {
+                    interaction.isDraggingOrbit = true;
+                    document.body.classList.add('is-dragging');
+                    if (!interaction.isHolding) clearTimeout(interaction.holdTimer);
+                }
+
+                if (interaction.isDraggingOrbit) {
+                    interaction.orbitYaw += dx * 0.0055;
+                    interaction.orbitPitch = Math.max(-0.55, Math.min(0.95, interaction.orbitPitch + dy * 0.004));
+                    interaction.orbitVelYaw = dx * 0.0055;
+                    interaction.orbitVelPitch = dy * 0.004;
+                }
+            }
+
+            interaction.prevPointerX = e.clientX;
+            interaction.prevPointerY = e.clientY;
+            interaction.mouseX = nx;
+            interaction.mouseY = ny;
+
+            // Project 3D cursor position for butterflies and stardust swirl
+            normalizedMouse.set(nx, ny);
+            raycaster.setFromCamera(normalizedMouse, camera);
+            raycaster.ray.intersectPlane(planeZ, interaction.worldMouse);
+            particleShaderMaterial.uniforms.uMouse3D.value.copy(interaction.worldMouse);
+            portraitMaterial.uniforms.uMouse3D.value.copy(interaction.worldMouse);
+
+            // Subtle crystal harp notes inspired by "Bụi Phấn" on graceful movement
+            if (Math.random() < 0.075 && !interaction.letterOpen) {
+                audioEngine.playNextMelodyNote(0.032);
+            }
+        });
+
+        window.addEventListener('pointerdown', (e) => {
+            audioEngine.init();
+
+            // If 20-11 Letter is open, clicking outside the glass slab dissolves it back into stardust
+            if (interaction.letterOpen) {
+                const slab = document.getElementById('luminaSlab');
+                if (!slab.contains(e.target)) {
+                    dismissLoveLetter();
+                }
+                return;
+            }
+
+            if (e.pointerType === 'mouse' && e.button !== 0) return;
+
+            interaction.pointerDown = true;
+            interaction.isDraggingOrbit = false;
+            interaction.dragDistance = 0;
+            interaction.orbitVelYaw = 0;
+            interaction.orbitVelPitch = 0;
+            interaction.prevPointerX = e.clientX;
+            interaction.prevPointerY = e.clientY;
+            interaction.holdStartTime = performance.now();
+
+            // Long-press (without dragging) toggles Book of Knowledge <-> Celestial Boat & Pen
+            clearTimeout(interaction.holdTimer);
+            interaction.holdTimer = setTimeout(() => {
+                if (!interaction.pointerDown || interaction.isDraggingOrbit || interaction.letterOpen || interaction.faceActive) return;
+
+                interaction.isHolding = true;
+                interaction.targetMorph = interaction.lockedBoatMode ? 0.0 : 1.0;
+                document.getElementById('stateSubtitle').textContent = interaction.lockedBoatMode
+                    ? "Đang Mở Lại Trang Sách Ngân Hà & Đóa Hoa Tri Ân..."
+                    : "Đang Kết Tinh Con Đò Tri Thức & Ngọn Bút Hoa Đăng...";
+            }, 240);
+        });
+
+        function releasePointer() {
+            clearTimeout(interaction.holdTimer);
+            interaction.pointerDown = false;
+            document.body.classList.remove('is-dragging');
+
+            const wasHolding = interaction.isHolding;
+            interaction.isHolding = false;
+            interaction.isDraggingOrbit = false;
+
+            if (!wasHolding) return;
+
+            if (!interaction.lockedBoatMode && interaction.morphProgress > 0.82) {
+                interaction.lockedBoatMode = true;
+                interaction.targetMorph = 1.0;
+                document.getElementById('stateSubtitle').textContent =
+                    "Con Đò Tri Thức & Ngọn Bút Hoa Đăng • Nhấn Đúp Mở Tâm Thư Gửi Cô Hải";
+                audioEngine.playCelestialChord(329.63);
+            } else if (interaction.lockedBoatMode && interaction.morphProgress < 0.25) {
+                interaction.lockedBoatMode = false;
+                interaction.targetMorph = 0.0;
+                document.getElementById('stateSubtitle').textContent =
+                    "Tri Ân Cô Hải - A1K64";
+                audioEngine.playCelestialChord(261.63);
+            } else {
+                interaction.targetMorph = interaction.lockedBoatMode ? 1.0 : 0.0;
+                refreshSubtitle();
+            }
+        }
+
+        window.addEventListener('pointerup', releasePointer);
+        window.addEventListener('pointercancel', releasePointer);
+        window.addEventListener('blur', () => {
+            releasePointer();
+            luxeCursor.classList.remove('visible');
+        });
+        document.addEventListener('mouseleave', () => luxeCursor.classList.remove('visible'));
+
+        // Double Click / Double Tap anywhere triggers the Sky Lantern Supernova & 20-11 Gratitude Scroll
+        window.addEventListener('dblclick', () => {
+            if (interaction.letterOpen) return;
+            trigger2011SupernovaAndLetter();
+        });
+
+        // Smooth Zoom with Scroll Wheel
+        // Cuộn xuống: vũ trụ hội tụ thành chân dung cô Hải ôm bó hoa. Cuộn lên: trả về cảnh cũ.
+        window.addEventListener('wheel', (e) => {
+            if (interaction.letterOpen) return;
+            if (Math.abs(e.deltaY) < 2) return;
+            const next = e.deltaY > 0 ? 1 : 0;   // chỉ cần một nấc cuộn là hội tụ trọn vẹn
+            if (next !== interaction.faceTarget) {
+                interaction.faceTarget = next;
+                audioEngine.playCelestialChord(next ? 392.00 : 261.63);
+            }
+        }, { passive: true });
+
+        // Cảm ứng: hai ngón mở ra để ghép gương mặt, chụm lại để trả về
+        let pinchPrev = 0;
+        window.addEventListener('touchmove', (e) => {
+            if (interaction.letterOpen || e.touches.length !== 2) { pinchPrev = 0; return; }
+            const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            if (pinchPrev) interaction.faceTarget = Math.max(0, Math.min(1, interaction.faceTarget + (d - pinchPrev) * 0.004));
+            pinchPrev = d;
+        }, { passive: true });
+        window.addEventListener('touchend', () => { pinchPrev = 0; }, { passive: true });
+
+        // Keyboard shortcuts: [SPACE] Chromatic Shockwave, [TAB] Cycle 5 Poetic 20-11 Letters, [ESC] Close
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                triggerSpacebarChromaticShift();
+            } else if (e.code === 'Tab' && interaction.letterOpen) {
+                e.preventDefault();
+                cyclePoetic2011Letter();
+            } else if (e.code === 'KeyF' && !interaction.letterOpen) {
+                interaction.faceTarget = interaction.faceTarget > 0.5 ? 0 : 1;
+            } else if (e.code === 'Escape' && interaction.letterOpen) {
+                dismissLoveLetter();
+            }
+        });
+
+        function refreshSubtitle() {
+            document.getElementById('stateSubtitle').textContent = interaction.faceActive
+                ? "Cô Hải Cùng Bó Hoa Tri Ân • Cuộn Lên Để Trở Về"
+                : (interaction.lockedBoatMode
+                    ? "Con Đò Tri Thức & Ngọn Bút Hoa Đăng • Nhấn Đúp Mở Tâm Thư Gửi Cô Hải"
+                    : "Tri Ân Cô Hải - A1K64");
+        }
+
+        function cyclePoetic2011Letter() {
+            currentLetterIdx = (currentLetterIdx + 1) % LETTERS_20_11.length;
+            const data = LETTERS_20_11[currentLetterIdx];
+
+            const badgeEl = document.getElementById('letterBadge');
+            const titleEl = document.getElementById('letterTitle');
+            const bodyEl = document.getElementById('letterBody');
+            const signEl = document.getElementById('letterSign');
+
+            titleEl.style.opacity = '0';
+            bodyEl.style.opacity = '0';
+            signEl.style.opacity = '0';
+
+            setTimeout(() => {
+                badgeEl.textContent = data.badge;
+                titleEl.textContent = data.title;
+                bodyEl.innerHTML = data.body;
+                signEl.textContent = data.sign;
+
+                titleEl.style.opacity = '1';
+                bodyEl.style.opacity = '1';
+                signEl.style.opacity = '1';
+            }, 220);
+
+            audioEngine.playCelestialChord(392.00);
+        }
+
+        function triggerSpacebarChromaticShift() {
+            currentPaletteIdx = (currentPaletteIdx + 1) % CHROMATIC_PALETTES.length;
+            const nextTheme = CHROMATIC_PALETTES[currentPaletteIdx];
+
+            targetColors.primary.copy(nextTheme.primary);
+            targetColors.secondary.copy(nextTheme.secondary);
+            targetColors.accent.copy(nextTheme.accent);
+            targetColors.butterfly.copy(nextTheme.butterfly);
+            targetColors.flame.copy(nextTheme.flame);
+
+            // Trigger 3D Spherical Shader Shockwave
+            particleShaderMaterial.uniforms.uShockwaveTime.value = clock.getElapsedTime();
+
+            // Update CSS variables & subtle header title
+            document.documentElement.style.setProperty('--glow-primary', nextTheme.cssPrimary);
+            document.documentElement.style.setProperty('--glow-secondary', nextTheme.cssSecondary);
+            document.documentElement.style.setProperty('--bg-deep', nextTheme.bgHex);
+            document.getElementById('paletteTitle').textContent = nextTheme.name;
+
+            // Trigger 2D Screen Shockwave Ring
+            const shockwave = document.getElementById('chromatic-shockwave');
+            shockwave.classList.remove('shockwave-active');
+            void shockwave.offsetWidth;
+            shockwave.classList.add('shockwave-active');
+
+            // Play celestial chord shift
+            const chordRoots = [261.63, 293.66, 329.63, 349.23, 392.00];
+            audioEngine.playCelestialChord(chordRoots[currentPaletteIdx]);
+        }
+
+        function trigger2011SupernovaAndLetter() {
+            audioEngine.playCelestialChord(523.25);
+            interaction.supernovaBurst = 0.01;
+
+            document.getElementById('stateSubtitle').textContent =
+                "✨ Ngàn Hoa Đăng Tri Ân Bay Lên Trời Đêm • Khai Mở Tâm Thư 20-11 ✨";
+
+            setTimeout(() => {
+                interaction.letterOpen = true;
+                document.getElementById('lumina-love-letter').classList.add('active');
+            }, 640);
+        }
+
+        function dismissLoveLetter() {
+            interaction.letterOpen = false;
+            document.getElementById('lumina-love-letter').classList.remove('active');
+            document.getElementById('stateSubtitle').textContent = interaction.lockedBoatMode
+                ? "Con Đò Tri Thức & Ngọn Bút Hoa Đăng • Nhấn Đúp Mở Tâm Thư Gửi Cô Hải"
+                : "Tri Ân Cô Hải - A1K64";
+            audioEngine.pluckCrystalNote(659.25, 0.08, 1.8);
+        }
+
+        /* ==========================================================================
+           9. MAIN 60FPS WEBGL RENDER & PHYSICS LOOP
+           ========================================================================== */
+        const clock = new THREE.Clock();
+        const chargeIndicator = document.getElementById('charge-aura-indicator');
+        const tempProjVec = new THREE.Vector3();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const elapsed = clock.getElapsedTime();
+
+            // Custom celestial star cursor easing
+            if (interaction.cursorInitialized) {
+                interaction.cursorX += (interaction.cursorTargetX - interaction.cursorX) * 0.36;
+                interaction.cursorY += (interaction.cursorTargetY - interaction.cursorY) * 0.36;
+                luxeCursor.style.transform =
+                    `translate3d(${interaction.cursorX.toFixed(2)}px, ${interaction.cursorY.toFixed(2)}px, 0) translate(-50%, -50%)`;
+            }
+
+            // 1. Smoothly interpolate chromatic palette shifts
+            activeColors.primary.lerp(targetColors.primary, 0.05);
+            activeColors.secondary.lerp(targetColors.secondary, 0.05);
+            activeColors.accent.lerp(targetColors.accent, 0.05);
+            activeColors.butterfly.lerp(targetColors.butterfly, 0.05);
+            activeColors.flame.lerp(targetColors.flame, 0.05);
+            petalMaterial.color.copy(activeColors.accent);
+
+            // 2. Update Morph Progress (Rose-Heart <-> 3D Floral Birthday Crown Cake)
+            const morphSpeed = interaction.isHolding ? 0.032 : 0.04;
+            interaction.morphProgress += (interaction.targetMorph - interaction.morphProgress) * morphSpeed;
+
+            // Vortex convergence energy while holding click
+            const targetVortex = interaction.isHolding ? Math.min(1.0, (performance.now() - interaction.holdStartTime) / 1600) : 0.0;
+            particleShaderMaterial.uniforms.uVortexCharge.value +=
+                (targetVortex - particleShaderMaterial.uniforms.uVortexCharge.value) * 0.08;
+
+            if (interaction.isHolding) {
+                audioEngine.updateChargeSound(particleShaderMaterial.uniforms.uVortexCharge.value);
+                chargeIndicator.style.opacity = (particleShaderMaterial.uniforms.uVortexCharge.value * 0.65).toFixed(2);
+                const ringScale = 1.25 - particleShaderMaterial.uniforms.uVortexCharge.value * 0.55;
+                chargeIndicator.style.transform = `translate(-50%, -50%) scale(${ringScale})`;
+            } else {
+                chargeIndicator.style.opacity = '0';
+            }
+
+            // 3. Supernova Explosion Decay
+            if (interaction.supernovaBurst > 0) {
+                interaction.supernovaBurst += 0.018;
+                if (interaction.supernovaBurst >= 1.0) {
+                    interaction.supernovaBurst = 0;
+                    interaction.targetMorph = 0.0;
+                }
+            }
+
+            // Update Particle Shader Uniforms
+            particleShaderMaterial.uniforms.uTime.value = elapsed;
+            particleShaderMaterial.uniforms.uMorph.value = interaction.morphProgress;
+            particleShaderMaterial.uniforms.uSupernova.value = interaction.supernovaBurst;
+
+            // 4. Update 3D Camera Parallax, Smooth 360 Orbit & Release Inertia
+            if (!interaction.isDraggingOrbit) {
+                interaction.orbitYaw += interaction.orbitVelYaw;
+                interaction.orbitPitch = Math.max(-0.55, Math.min(0.95, interaction.orbitPitch + interaction.orbitVelPitch));
+                interaction.orbitVelYaw *= 0.93;
+                interaction.orbitVelPitch *= 0.93;
+                if (Math.abs(interaction.orbitVelYaw) < 0.00005) interaction.orbitVelYaw = 0;
+                if (Math.abs(interaction.orbitVelPitch) < 0.00005) interaction.orbitVelPitch = 0;
+            }
+
+            interaction.currentZoom += (interaction.targetZoom - interaction.currentZoom) * 0.06;
+            const parallaxX = interaction.isDraggingOrbit ? 0 : interaction.mouseX * 0.35;
+            const parallaxY = interaction.isDraggingOrbit ? 0 : interaction.mouseY * 0.25;
+            const targetCamX = Math.sin(interaction.orbitYaw + parallaxX) * interaction.currentZoom;
+            const targetCamZ = Math.cos(interaction.orbitYaw + parallaxX) * interaction.currentZoom;
+            const targetCamY = (interaction.orbitPitch + parallaxY) * 24.0;
+
+            camera.position.x += (targetCamX - camera.position.x) * 0.06;
+            camera.position.y += (targetCamY - camera.position.y) * 0.06;
+            camera.position.z += (targetCamZ - camera.position.z) * 0.06;
+            camera.lookAt(0, 1.5, 0);
+
+            // Gentle rotation of the entire cosmic sculpture
+            const nowT = performance.now();
+            const dt = Math.min(0.05, (nowT - (interaction.lastT || nowT)) / 1000);
+            interaction.lastT = nowT;
+            interaction.faceProgress += (interaction.faceTarget - interaction.faceProgress) * 0.04;
+            particleShaderMaterial.uniforms.uFace.value = interaction.faceProgress;
+            portraitMaterial.uniforms.uFace.value = interaction.faceProgress;
+            portraitMaterial.uniforms.uTime.value = elapsed;
+            portraitMaterial.uniforms.uSupernova.value = interaction.supernovaBurst;
+            portraitSystem.visible = interaction.faceProgress > 0.002;
+            const faceOn = interaction.faceTarget > 0.5;
+            interaction.targetZoom = faceOn ? 36 : 46;   // tiến lại gần để thấy rõ chân dung
+            if (faceOn) {
+                // Dừng xoay, đưa gương mặt về chính diện (vẫn kéo chuột xoay ngắm 3D được)
+                const TAU = Math.PI * 2;
+                interaction.autoRot += (Math.round(interaction.autoRot / TAU) * TAU - interaction.autoRot) * 0.05;
+                if (!interaction.isDraggingOrbit) {
+                    interaction.orbitYaw += (Math.round(interaction.orbitYaw / TAU) * TAU - interaction.orbitYaw) * 0.03;
+                    interaction.orbitPitch += (0.08 - interaction.orbitPitch) * 0.03;
+                }
+            } else {
+                interaction.autoRot += dt * 0.14;
+            }
+            universeGroup.rotation.y = interaction.autoRot;
+            if (faceOn !== interaction.faceActive) {
+                interaction.faceActive = faceOn;
+                if (!interaction.letterOpen) refreshSubtitle();
+            }
+
+            // 5. Update 3D Crystal Butterflies (Flapping + Following 3D Cursor)
+            for (let i = 0; i < BUTTERFLY_COUNT; i++) {
+                const b = butterflies[i];
+                b.mesh.material.uniforms.uTime.value = elapsed;
+
+                b.orbitAngle += b.orbitSpeed;
+                const idealPos = new THREE.Vector3(
+                    Math.cos(b.orbitAngle) * b.orbitRadius,
+                    Math.sin(elapsed * 1.5 + b.verticalPhase) * 6.5 + 1.5,
+                    Math.sin(b.orbitAngle) * b.orbitRadius
+                );
+
+                // Gently attract towards 3D cursor or vortex center when holding
+                if (interaction.isHolding) {
+                    idealPos.multiplyScalar(0.38);
+                } else {
+                    idealPos.lerp(interaction.worldMouse, 0.22);
+                }
+
+                const steer = idealPos.sub(b.mesh.position).multiplyScalar(0.035);
+                b.velocity.add(steer).multiplyScalar(0.92);
+                b.mesh.position.add(b.velocity);
+
+                // Orient butterfly along its flight vector
+                const lookTarget = b.mesh.position.clone().add(b.velocity);
+                b.mesh.lookAt(lookTarget);
+            }
+
+            // 6. Update Instanced 3D Silk Rose Petals
+            for (let i = 0; i < PETAL_COUNT; i++) {
+                const p = petalData[i];
+                p.pos.y += p.riseSpeed + interaction.supernovaBurst * 0.45;
+                p.pos.x += Math.sin(elapsed * 1.2 + p.swayPhase) * 0.03;
+                p.pos.z += Math.cos(elapsed * 1.1 + p.swayPhase) * 0.03;
+
+                if (p.pos.y > 22) p.pos.y = -18;
+
+                p.rot.x += p.rotSpeed.x;
+                p.rot.y += p.rotSpeed.y;
+                p.rot.z += p.rotSpeed.z;
+
+                petalDummy.position.copy(p.pos);
+                petalDummy.rotation.copy(p.rot);
+                petalDummy.scale.setScalar(p.scale);
+                petalDummy.updateMatrix();
+                instancedPetals.setMatrixAt(i, petalDummy.matrix);
+            }
+            instancedPetals.instanceMatrix.needsUpdate = true;
+
+            // 7. Update 3D-Projected Vietnamese Floating Whispers (Ultra Subtle)
+            const halfW = window.innerWidth / 2;
+            const halfH = window.innerHeight / 2;
+
+            for (let i = 0; i < whisperNodes.length; i++) {
+                const w = whisperNodes[i];
+                const a = w.angle + elapsed * 0.12;
+                tempProjVec.set(
+                    Math.cos(a) * w.radius,
+                    w.yOffset + Math.sin(elapsed * 0.8 + i) * 1.6,
+                    Math.sin(a) * w.radius
+                );
+                tempProjVec.applyMatrix4(universeGroup.matrixWorld);
+                tempProjVec.project(camera);
+
+                if (tempProjVec.z < 1.0) {
+                    const sx = (tempProjVec.x * halfW) + halfW;
+                    const sy = -(tempProjVec.y * halfH) + halfH;
+                    const depthScale = Math.max(0.55, Math.min(1.05, (1.0 - tempProjVec.z) * 11));
+                    const depthOpacity = Math.max(0.05, Math.min(0.46, (1.0 - tempProjVec.z) * 6.5)) * (interaction.letterOpen ? 0.08 : 1.0);
+
+                    w.el.style.transform = `translate3d(${sx}px, ${sy}px, 0) translate(-50%, -50%) scale(${depthScale.toFixed(2)})`;
+                    w.el.style.opacity = depthOpacity.toFixed(2);
+                } else {
+                    w.el.style.opacity = '0';
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            particleShaderMaterial.uniforms.uPixelRatio.value = Math.min(window.devicePixelRatio, 2);
+            portraitMaterial.uniforms.uPixelRatio.value = Math.min(window.devicePixelRatio, 2);
+        });
+
+        window.onload = () => {
+            animate();
+        };
+    </script>
+</body>
+</html>
